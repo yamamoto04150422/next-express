@@ -1,0 +1,34 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+defaults:
+  run:
+    shell: bash
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # チェックアウトリポジトリ
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Node.jsのセットアップ
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # パッケージのインストール
+      - name: Install Dependencies
+        run: npm ci
+
+      # Lintの実行
+      - name: Run Lint
+        run: npm run lint
+
+        #タイムアウト 10分
+        timeout-minutes: 10
