@@ -16,7 +16,7 @@ npm install --save-dev eslint-config-prettier eslint-plugin-prettier
 
 ### 除外ファイルを作成
 
-`.prettierignore`と`.prettierignore`
+`.eslintignore`と`.prettierignore`
 
 ```
 node_modules
