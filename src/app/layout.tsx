@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { PrimeReactProvider } from "primereact/api";
 import "./globals.css";
+import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="jp">
-      <body>{children}</body>
+    <html lang="ja">
+      <PrimeReactProvider>
+        <body>{children}</body>
+      </PrimeReactProvider>
     </html>
   );
 }
