@@ -1,6 +1,6 @@
 "use client";
 
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import { PrimeReactProvider } from "primereact/api";
 import "../styles/globals.css";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
