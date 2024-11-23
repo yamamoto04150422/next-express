@@ -1,9 +1,12 @@
-import { Button } from "primereact/button";
+"use client";
+
+import AuthButton from "./components/AuthButton";
 
 export default function Home() {
   return (
     <>
-      <Button />
+      <h1>Next.js OAuth Example</h1>
+      <AuthButton />
     </>
   );
 }
