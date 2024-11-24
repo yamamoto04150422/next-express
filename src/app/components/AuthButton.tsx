@@ -9,13 +9,16 @@ export default function AuthButton() {
   if (session) {
     return (
       <div className="auth-container">
-        <h1>Welcome, {session.user.name}!</h1>
-        <p>Email: {session.user.email}</p>
-        {/* <img
-          src={session.user.image || ""}
-          alt="Profile"
-          className="profile-image"
-        /> */}
+        <h1>Welcome, {session.user?.name}!</h1>
+        <p>Email: {session.user?.email}</p>
+        {session.user?.image && (
+          // eslint-disable-next-line
+          <img
+            src={session.user.image || ""}
+            alt="Profile"
+            className="profile-image"
+          />
+        )}
         <Button
           label="Sign out"
           icon="pi pi-sign-out"

@@ -1,6 +1,10 @@
 ```
 git init
 
+git branch xxx
+
+git checkout xxx
+
 git add ./
 
 git commit -m "first commit"
