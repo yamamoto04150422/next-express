@@ -15,9 +15,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-        # Docker Composeのインストール
-      - name: Set up Docker Compose
+        # Dockerのセットアップ
+      - name: Set up Docker
         uses: docker/setup-buildx-action@v3
+
+      # Docker Composeのインストール
+      - name: Install Docker Compose
+        run: |
+          curl -L https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
 
       # Docker Composeを使って依存関係をインストール
       - name: Build Docker Compose Services
