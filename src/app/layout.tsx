@@ -5,6 +5,7 @@ import { PrimeReactProvider } from "primereact/api";
 import "../styles/globals.css";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
 import "primereact/resources/primereact.min.css";
 import { SessionProvider } from "next-auth/react";
 
