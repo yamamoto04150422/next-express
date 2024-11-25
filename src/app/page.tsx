@@ -1,6 +1,6 @@
 "use client";
 
-import AuthButton from "./components/AuthButton";
+import AuthButton from "./components/auth/AuthButton";
 
 export default function Home() {
   return (

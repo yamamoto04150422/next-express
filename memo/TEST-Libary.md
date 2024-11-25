@@ -4,6 +4,9 @@ npm install --save-dev jest @testing-library/react @testing-library/jest-dom @te
 # 必要＿
 npm install --save-dev jest-environment-jsdom
 
+# tsの場合のみ
+npm install --save-dev ts-node
+
 # 作成 以下をコピペで良い気がする
 npm init jest@latest
 ```
