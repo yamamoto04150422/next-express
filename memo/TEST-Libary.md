@@ -40,6 +40,37 @@ module.exports = createJestConfig(customJestConfig);
 }
 ```
 
+## jest.setup.ts
+
+同じ記載をまとめる役割
+
+```
+jest.setup.ts
+import "@testing-library/jest-dom";
+
+jest.config.ts
+const customJestConfig = {
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"], // ここでセットアップファイルを指定
+};
+```
+
+## prime reactとの依存関係
+
+```
+
+npm install --save-dev happy-dom
+npm install --save-dev @happy-dom/jest-environment
+Update jest.config.ts to use Happy DOM:
+
+{
+"testEnvironment": "@happy-dom/jest-environment"
+}
+npm uninstall jest-environment-jsdom
+
+```
+
+[issues](ttps://github.com/primefaces/primeng/issues/14085)
+
 ### 参考リンク
 
 - [Zenn: Jest環境構築](https://zenn.dev/c_shiraga/articles/056e7196b41c08)

@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { Calendar, CalendarDateTemplateEvent } from "primereact/calendar";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 import { Button } from "primereact/button";
+import { Nullable } from "primereact/ts-helpers";
 
 interface MaskedCalendarProps {
   id: string;
@@ -21,7 +22,7 @@ interface MaskedCalendarProps {
 const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
   const [calendar, setCalendar] = useState<Date | null>(null);
   // マスクされた値を管理
-  const [maskedValue, setMaskedValue] = useState<string>("");
+  const [maskedValue, setMaskedValue] = useState<string>();
   // Calendar の参照型
   const calendarRef = useRef<Calendar>(null);
 
@@ -41,10 +42,10 @@ const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
     return `${y}/${m}/${d}`;
   };
 
-  // eslint-disable-next-line
-  const handleCalendarChange = (e: any) => {
-    setCalendar(e.value);
-    setMaskedValue(formatDate(e.value));
+  const handleCalendarChange = (value: Nullable<Date>) => {
+    const calendarValue = value ?? null;
+    setCalendar(calendarValue);
+    setMaskedValue(formatDate(calendarValue));
   };
 
   const handleMaskedChange = (e: InputMaskChangeEvent) => {
@@ -59,18 +60,20 @@ const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
    * @returns
    */
   const handleBlur = () => {
-    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(maskedValue)) return null;
-    const [year, month, day] = maskedValue.split("/").map(Number);
-    const date = new Date(year, month - 1, day);
+    if (maskedValue) {
+      if (!/^\d{4}\/\d{2}\/\d{2}$/.test(maskedValue)) return null;
+      const [year, month, day] = maskedValue.split("/").map(Number);
+      const date = new Date(year, month - 1, day);
 
-    // 月や日の範囲が正しいか、またその日が正しいかをチェック
-    if (
-      date.getFullYear() !== year ||
-      date.getMonth() + 1 !== month ||
-      date.getDate() !== day
-    ) {
-      // 無効な日付
-      setMaskedValue("");
+      // 月や日の範囲が正しいか、またその日が正しいかをチェック
+      if (
+        date.getFullYear() !== year ||
+        date.getMonth() + 1 !== month ||
+        date.getDate() !== day
+      ) {
+        // 無効な日付
+        setMaskedValue("");
+      }
     }
   };
 
@@ -94,6 +97,8 @@ const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
           onChange={handleMaskedChange}
           onBlur={handleBlur}
           mask="9999/99/99"
+          placeholder="yyyy/mm/dd"
+          slotChar="yyyy/mm/dd"
         />
 
         {/* 機能としてのみ利用したい */}
@@ -106,7 +111,7 @@ const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
           showOtherMonths={true} // 前後月の日付を表示
           selectOtherMonths={true} // 前後月の日付を選択可能にする
           disabledDays={[0, 6]} // 日曜と土曜を無効化
-          onChange={handleCalendarChange}
+          onChange={(e) => handleCalendarChange(e.value)}
           inputStyle={{ display: "none" }}
           appendTo="self"
           className="custom-calendar"
