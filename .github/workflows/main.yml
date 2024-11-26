@@ -33,5 +33,13 @@ jobs:
       - name: Run Lint in Docker
         run: docker-compose run --rm app npm run lint
 
+      # Docker Composeを使ってテストを実行
+      - name: Run Tests in Docker
+        run: docker-compose run --rm app npm run test
+
+      # Docker Composeのクリーンアップ
+      - name: Clean up Docker Compose
+        run: docker-compose down
+
         #タイムアウト 10分
         timeout-minutes: 10
