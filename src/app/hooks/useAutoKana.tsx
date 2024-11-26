@@ -13,6 +13,7 @@ export const useAutoKana = (nameId: string, kanaId: string) => {
         setAutoKana(ak);
       });
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {

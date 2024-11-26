@@ -6,7 +6,7 @@ import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Steps } from "primereact/steps";
 
-export const items = [
+const items = [
   {
     label: "仮登録",
   },
