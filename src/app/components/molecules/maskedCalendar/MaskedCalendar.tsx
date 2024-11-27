@@ -129,6 +129,7 @@ const MaskedCalendar = ({ id, colorChangeDates }: MaskedCalendarProps) => {
         />
         <Button
           icon="pi pi-calendar"
+          type="button"
           onClick={() => {
             calendarRef.current?.show();
             const inputMaskElement = document.getElementById(id);
