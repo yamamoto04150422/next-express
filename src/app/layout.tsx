@@ -1,13 +1,16 @@
 "use client";
 
 // import type { Metadata } from "next";
-import { PrimeReactProvider } from "primereact/api";
+import { PrimeReactProvider, addLocale, locale } from "primereact/api";
 import "../styles/globals.css";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "primereact/resources/primereact.min.css";
 import { SessionProvider } from "next-auth/react";
+import { useState } from "react";
+import { useEffectOnce } from "./hooks/CustomHooks";
+import { LocaleJp } from "./utils/LocaleJp";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -19,13 +22,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // FOUC対策
+  const [showScreen, setShowScreen] = useState(false);
+  useEffectOnce(() => {
+    setShowScreen(true);
+  });
+
+  // 日本語設定
+  addLocale("jp", LocaleJp);
+
+  locale("jp");
   return (
     <html lang="ja">
-      <PrimeReactProvider>
-        <SessionProvider>
-          <body>{children}</body>
-        </SessionProvider>
-      </PrimeReactProvider>
+      {showScreen && (
+        <PrimeReactProvider>
+          <SessionProvider>
+            <body>{children}</body>
+          </SessionProvider>
+        </PrimeReactProvider>
+      )}
     </html>
   );
 }
