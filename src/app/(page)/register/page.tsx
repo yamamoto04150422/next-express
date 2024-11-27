@@ -100,6 +100,11 @@ export default function RegisterPage() {
                 </div>
               </GridItem>
             </Grid>
+            {affiliations.map((item) => (
+              <p key={item.id}>
+                {item.id}/{item.name}
+              </p>
+            ))}
           </form>
         </Card>
       </div>
