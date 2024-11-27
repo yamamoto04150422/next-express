@@ -6,8 +6,9 @@ import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 import { Button } from "primereact/button";
 import { Nullable } from "primereact/ts-helpers";
 
-interface MaskedCalendarProps {
+export interface MaskedCalendarProps {
   id: string;
+  colorChangeDates: Date[];
 }
 
 /**
@@ -19,7 +20,7 @@ interface MaskedCalendarProps {
  * @param param0
  * @returns
  */
-const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
+const MaskedCalendar = ({ id, colorChangeDates }: MaskedCalendarProps) => {
   const [calendar, setCalendar] = useState<Date | null>(null);
   // マスクされた値を管理
   const [maskedValue, setMaskedValue] = useState<string>();
@@ -77,14 +78,12 @@ const MaskedCalendar = ({ id }: MaskedCalendarProps) => {
     }
   };
 
-  // 色を変更したときの値
-  const specialDates = [new Date(2024, 11, 10), new Date(2024, 11, 25)];
   const isSpecialDate = (date: Date) => {
-    return specialDates.some(
-      (specialDate) =>
-        date.getFullYear() === specialDate.getFullYear() &&
-        date.getMonth() === specialDate.getMonth() &&
-        date.getDate() === specialDate.getDate()
+    return colorChangeDates.some(
+      (colorChangeDate) =>
+        date.getFullYear() === colorChangeDate.getFullYear() &&
+        date.getMonth() === colorChangeDate.getMonth() &&
+        date.getDate() === colorChangeDate.getDate()
     );
   };
 
