@@ -34,13 +34,13 @@ export default function RootLayout({
   locale("jp");
   return (
     <html lang="ja">
-      {showScreen && (
-        <PrimeReactProvider>
-          <SessionProvider>
-            <body>{children}</body>
-          </SessionProvider>
-        </PrimeReactProvider>
-      )}
+      <body>
+        {showScreen && (
+          <PrimeReactProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </PrimeReactProvider>
+        )}
+      </body>
     </html>
   );
 }
