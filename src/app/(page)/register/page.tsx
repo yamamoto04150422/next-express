@@ -1,10 +1,13 @@
 "use client";
 
+import MaskedCalendar from "@/app/components/molecules/maskedCalendar/MaskedCalendar";
 import { COLUMN_POSITIONS, Grid, GridItem } from "@/styles/grid/Grid";
+import { Affiliation } from "@/types/affiliation/Affiliation";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Steps } from "primereact/steps";
+import { useState } from "react";
 
 const items = [
   {
@@ -19,6 +22,21 @@ const items = [
 ];
 
 export default function RegisterPage() {
+  const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
+  const onClickAffiliations = async () => {
+    try {
+      const response = await fetch("/api/affiliations");
+      if (!response.ok) {
+        throw new Error("データの取得に失敗しました");
+      }
+      const data = await response.json();
+      setAffiliations(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
   return (
     <>
       <div className="card">
@@ -59,6 +77,34 @@ export default function RegisterPage() {
                 <InputText type="text" />
               </GridItem>
             </Grid>
+            <Grid>
+              <GridItem $isLabel={true}>
+                <p>生年月日:</p>
+              </GridItem>
+              <GridItem $isLabel={false}>
+                <MaskedCalendar id="birthDay" colorChangeDates={[]} />
+              </GridItem>
+            </Grid>
+            <Grid>
+              <GridItem $isLabel={true}>
+                <p>所属:</p>
+              </GridItem>
+              <GridItem $isLabel={false}>
+                <div className="p-inputgroup flex-1">
+                  <InputText type="text" />
+                  <Button
+                    type="button"
+                    icon="pi pi-search"
+                    onClick={onClickAffiliations}
+                  />
+                </div>
+              </GridItem>
+            </Grid>
+            {affiliations.map((item) => (
+              <p key={item.id}>
+                {item.id}/{item.name}
+              </p>
+            ))}
           </form>
         </Card>
       </div>
