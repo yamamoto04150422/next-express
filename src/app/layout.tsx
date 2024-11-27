@@ -11,6 +11,7 @@ import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import { useEffectOnce } from "./hooks/CustomHooks";
 import { LocaleJp } from "./utils/LocaleJp";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -32,12 +33,20 @@ export default function RootLayout({
   addLocale("jp", LocaleJp);
 
   locale("jp");
+
+  // tanstack-query
+  const queryClient = new QueryClient();
+
   return (
     <html lang="ja">
       <body>
         {showScreen && (
           <PrimeReactProvider>
-            <SessionProvider>{children}</SessionProvider>
+            <SessionProvider>
+              <QueryClientProvider client={queryClient}>
+                {children}
+              </QueryClientProvider>
+            </SessionProvider>
           </PrimeReactProvider>
         )}
       </body>
