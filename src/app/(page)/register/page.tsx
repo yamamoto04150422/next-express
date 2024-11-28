@@ -52,18 +52,6 @@ export default function RegisterPage() {
     staleTime: 5 * 60 * 1000, // 5分間はデータを再フェッチしない
   });
 
-  const onClickAffiliations = () => {
-    setIsButtonClicked(true); // ボタンクリック時にデータ取得を有効にする
-  };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error instanceof Error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   // バリデーションスキーマ
   const schema = yup.object().shape({
     username: yup
@@ -81,9 +69,21 @@ export default function RegisterPage() {
     resolver: yupResolver(schema), // yupを適用
   });
 
+  const onClickAffiliations = () => {
+    setIsButtonClicked(true); // ボタンクリック時にデータ取得を有効にする
+  };
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error instanceof Error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <>
