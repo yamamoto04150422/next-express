@@ -1,3 +1,5 @@
+"use client";
+
 import { styled } from "styled-components";
 
 const defaultColumnGap = "8px";
@@ -91,9 +93,9 @@ export const GridItem = styled.div<GridItemProps>`
     (props.$isLabel ? DEFAULT_COLUMN.pc.label : DEFAULT_COLUMN.pc.input)};
   display: flex;
   align-items: center;
-  /* align-items: flex-start; */
+   align-items: flex-start; 
   /* アイテムを縦方向で上揃え */
-  /* justify-content: flex-start;*/
+   justify-content: flex-start;
    /* アイテムを横方向で左揃え */
 
   @media (max-width: ${BREAKPOINT}px) {
