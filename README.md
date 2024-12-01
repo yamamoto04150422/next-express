@@ -120,6 +120,46 @@
 └── CHANGELOG.md             # 変更履歴
 ```
 
+## 自動生成ファイル（型）
+
+1. **Swagger/OpenAPI ファイルをもとに TypeScript クライアントコードを生成**
+
+   プロジェクトに含まれる `./src/app/openApi/openapi.yml` ファイルを元に、`swagger-codegen` を使って TypeScript クライアントコードを生成します。このコード生成は、以下のシェルスクリプトと Docker コンテナを利用して行います。
+
+2. **シェルスクリプト実行**
+
+   自動生成用のシェルスクリプト `generate-api.sh` を実行することで、API クライアントの型定義ファイルが生成されます。
+
+   実行方法:
+
+   ```bash
+   ./sh/generate-api.sh
+   ```
+
+   これにより、./src/types/autoFile フォルダ内に TypeScript の型ファイルが出力されます
+
+### コンテナの起動とコード生成
+
+コンテナが起動し、API クライアントコードが指定した ./src/types/autoFile フォルダに自動的に出力されます。以下のコマンドでコンテナをビルドし、実行します。
+
+```
+docker-compose up --build
+```
+
+これにより、API クライアントの型定義や関連ファイルが ./src/types/autoFile に出力されます。
+
+### 生成されるファイルの例
+
+- index.ts
+- api.ts
+- api_test.spec.ts
+- configuration.ts
+- custom.d.ts
+- gitignore
+- swagger-codegen-ignore
+
+これらのファイルは TypeScript クライアントコードとして利用可能です。generate-api.sh または Docker コンテナを使ってこれらを自動生成し、プロジェクトで使用することができます。
+
 ---
 
 ## 主な依存関係
