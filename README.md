@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
+# Next.js Express プロジェクト
 
-## Getting Started
+このプロジェクトは **Next.js** を使用して構築されたアプリケーションで、**React Hook Form** によるフォーム管理や **TanStack React Query** によるデータフェッチ機能を統合しています。また、UIコンポーネントには **PrimeReact** を採用し、スタイリングには **Styled-Components** を使用しています。
+---
 
-First, run the development server:
+## 目次
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. [概要](#概要)
+2. [セットアップ方法](#セットアップ方法)
+3. [利用可能なスクリプト](#利用可能なスクリプト)
+4. [ディレクトリ構成](#ディレクトリ構成)
+5. [主な依存関係](#主な依存関係)
+6. [開発環境の依存関係](#開発環境の依存関係)
+7. [その他のドキュメント](#その他のドキュメント)
+
+---
+
+## 概要
+
+このアプリケーションは以下の主要機能をサポートしています：
+
+- **フォーム管理**：`react-hook-form` + `yup` を用いたバリデーション
+- **データ取得とキャッシュ管理**：`@tanstack/react-query`
+- **UI構築**：`primereact` を用いた高品質なコンポーネント
+- **テスト環境**：`jest` と `@testing-library/react` によるテストフレームワーク
+- **コンポーネント開発**：`storybook` によるUI開発
+
+---
+
+## セットアップ方法
+
+1. リポジトリをクローンします：
+
+   ```bash
+   git clone <リポジトリURL>
+   cd next-express
+   ```
+
+2. 必要な依存関係をインストールします：
+
+   ```bash
+   npm install
+   ```
+
+3. 開発サーバーを起動します：
+
+   ```bash
+   npm run dev
+   ```
+
+4. [http://localhost:3000](http://localhost:3000) にアクセスして動作を確認してください。
+
+---
+
+## 利用可能なスクリプト
+
+以下のスクリプトが `package.json` に定義されています：
+
+- **`npm run dev`**  
+  開発サーバーを起動します（デフォルトはポート3000）。
+
+- **`npm run build`**  
+  本番環境用にアプリケーションをビルドします。
+
+- **`npm start`**  
+  ビルドされたアプリケーションを起動します。
+
+- **`npm run lint`**  
+  ESLint を実行してコードのリントチェックを行います。
+
+- **`npm run test`**  
+  Jest を使用してテストを実行します。
+
+- **`npm run test:watch`**  
+  テストをウォッチモードで実行します。
+
+- **`npm run test:coverage`**  
+  テストのカバレッジレポートを生成します。
+
+- **`npm run storybook`**  
+  Storybook を起動します（デフォルトはポート6006）。
+
+- **`npm run build-storybook`**  
+  Storybook をビルドします。
+
+---
+
+以下は修正版のディレクトリ構成を反映したREADMEです：
+
+---
+
+## ディレクトリ構成
+
+```
+.
+├── src/                     # アプリケーションのソースコード
+│   ├── app/                 # Next.js App Router 構造
+│   │   ├── (page)/          # ルーティングページ
+│   │   ├── api/             # APIエンドポイント
+│   │   ├── components/      # 再利用可能なUIコンポーネント
+│   │   │   ├── atoms/       # 最小単位のUIコンポーネント
+│   │   │   ├── molecules/   # 複数のatomsを組み合わせたコンポーネント
+│   │   │   ├── auth/        # 認証関連のコンポーネント
+│   │   ├── hooks/           # カスタムフック
+│   │   ├── layout.tsx       # アプリ全体のレイアウト
+│   │   ├── page.tsx         # ルートページ
+│   │   └── utils/           # ユーティリティ関数
+│   ├── styles/              # Styled-Componentsのスタイル定義
+│   └── types/               # TypeScriptの型定義
+├── public/                  # 静的ファイル
+├── coverage/                # テストカバレッジのレポート
+├── README.md                # プロジェクトの概要と説明
+├── package.json             # npmの依存関係とスクリプト
+├── Dockerfile               # Docker環境構築用の設定
+├── docker-compose.yml       # Docker Composeの設定
+├── jest.config.js           # Jestの設定
+├── next.config.ts           # Next.jsの設定
+├── tsconfig.json            # TypeScriptの設定
+└── CHANGELOG.md             # 変更履歴
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 主な依存関係
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **[@tanstack/react-query](https://tanstack.com/query)**：データの取得とキャッシュ管理をサポート。
+- **[react-hook-form](https://react-hook-form.com/)**：簡潔で柔軟なフォーム管理ライブラリ。
+- **[yup](https://github.com/jquense/yup)**：スキーマベースのバリデーションライブラリ。
+- **[primereact](https://www.primereact.org/)**：洗練されたUIコンポーネント。
+- **[styled-components](https://styled-components.com/)**：CSS-in-JSスタイリングライブラリ。
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 開発環境の依存関係
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **[@testing-library/react](https://testing-library.com/)**：Reactコンポーネントのテストツール。
+- **[jest](https://jestjs.io/)**：JavaScriptのテストフレームワーク。
+- **[storybook](https://storybook.js.org/)**：UIコンポーネント開発環境。
+- **[typescript](https://www.typescriptlang.org/)**：静的型付けをサポートするJavaScriptスーパーセット。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## その他のドキュメント
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **`CHANGELOG.md`**  
+  プロジェクトの変更履歴を記録。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **`CONTRIBUTING.md`**  
+  コードやドキュメントへの貢献方法を説明するガイドライン。
+
+- **`LICENSE`**  
+  プロジェクトのライセンス情報。
+
+- **`docs/`**  
+  API仕様やアーキテクチャ設計書など、追加のドキュメントを管理するディレクトリ。
+
+---
+
+ご不明な点や改善案がありましたら、ぜひフィードバックをお寄せください！

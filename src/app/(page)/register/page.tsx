@@ -12,6 +12,8 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
 const items = [
   {
@@ -43,8 +45,8 @@ export default function RegisterPage() {
   // 初期データを取得
   const {
     data: affiliations,
-    error,
-    isLoading,
+    // error,
+    // isLoading,
   } = useQuery<Affiliation[], Error>({
     queryKey: ["affiliations"], // キャッシュキー
     queryFn: fetchAffiliations, // データ取得関数
@@ -77,19 +79,17 @@ export default function RegisterPage() {
     console.log(data);
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (error instanceof Error) {
-    return <div>Error: {error.message}</div>;
-  }
+  // if (error instanceof Error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
 
   return (
     <>
-      <div className="card">
-        <Steps model={items} activeIndex={0} />
-      </div>
+      <Steps model={items} activeIndex={0} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div style={styles.container}>
           <Card
@@ -166,17 +166,18 @@ export default function RegisterPage() {
                 </div>
               </GridItem>
             </Grid>
-            {affiliations && (
-              <div>
-                {affiliations.map((item) => (
-                  <p key={item.id}>
-                    {item.id} / {item.name}
-                  </p>
-                ))}
-              </div>
-            )}
           </Card>
         </div>
+        <Card>
+          {affiliations && (
+            <div>
+              <DataTable value={affiliations}>
+                <Column field="id" header="ID" />
+                <Column field="name" header="名称" />
+              </DataTable>
+            </div>
+          )}
+        </Card>
       </form>
     </>
   );
