@@ -23,7 +23,7 @@ export interface MaskedCalendarProps {
 const MaskedCalendar = ({ id, colorChangeDates }: MaskedCalendarProps) => {
   const [calendar, setCalendar] = useState<Date | null>(null);
   // マスクされた値を管理
-  const [maskedValue, setMaskedValue] = useState<string>();
+  const [maskedValue, setMaskedValue] = useState<string>("");
   // Calendar の参照型
   const calendarRef = useRef<Calendar>(null);
 
