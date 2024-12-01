@@ -22,12 +22,3 @@ services:
     volumes:
       - ./src/app/openApi/openapi.yml:/app/openapi.yml
     restart: always
-
-  swagger-codegen:
-    image: swaggerapi/swagger-codegen-cli-v3
-    container_name: swagger-codegen
-    command: generate -i /local/openapi.yml -l typescript-fetch -o /local/out/typescript
-    volumes:
-      - ./src/app/openApi:/local
-      - ./src/types/autoFile:/local/out # 出力先ディレクトリを変更
-    working_dir: /local
