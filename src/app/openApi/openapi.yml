@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+paths:
+  /employees:
+    get:
+      summary: Get all employees
+      responses:
+        "200":
+          description: A list of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+  /affiliations:
+    get:
+      summary: Get all affiliations
+      responses:
+        "200":
+          description: A list of affiliations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Affiliation"
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Affiliation:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
