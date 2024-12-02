@@ -19,8 +19,6 @@ export default function Home() {
     }
   }, [searchParams, router]);
 
-  const error2 = searchParams.get("error");
-
   return (
     <>
       <h1>Next.js OAuth Example</h1>
