@@ -21,6 +21,7 @@ export function middleware(req: NextRequest) {
   if (!token) {
     const loginUrl = req.nextUrl.clone();
     loginUrl.pathname = "/";
+    loginUrl.searchParams.set("error", "unauthorized");
     return NextResponse.redirect(loginUrl);
   }
 
