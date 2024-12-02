@@ -13,6 +13,9 @@ export default function Home() {
       <Link href="/register">
         <Button label="新規会員登録" />
       </Link>
+      <Link href="/sample">
+        <Button label="認証が不要な画面" />
+      </Link>
     </>
   );
 }
