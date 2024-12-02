@@ -11,7 +11,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "generate:swagger": "docker build -t swagger-codegen -f src/app/openApi/Dockerfile.codegen src/app/openApi && docker run --rm -v $(pwd)/src/app/openApi:/local swagger-codegen"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

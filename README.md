@@ -1,8 +1,7 @@
----
 # Next.js Express プロジェクト
 
 このプロジェクトは **Next.js** を使用して構築されたアプリケーションで、**React Hook Form** によるフォーム管理や **TanStack React Query** によるデータフェッチ機能を統合しています。また、UIコンポーネントには **PrimeReact** を採用し、スタイリングには **Styled-Components** を使用しています。
-openApiを使用しています。
+
 ---
 
 ## 目次
@@ -53,6 +52,17 @@ openApiを使用しています。
 
 4. [http://localhost:3000](http://localhost:3000) にアクセスして動作を確認してください。
 
+5. docker 起動
+
+   ```
+   docker-compose up -d
+
+   ```
+
+   1. [http://localhost:3000](http://localhost:3000) にアクセスして動作を確認してください。
+
+   2. [http://localhost:8080](http://localhost:8080) にアクセスして動作を確認してください。
+
 ---
 
 ## 利用可能なスクリプト
@@ -86,9 +96,8 @@ openApiを使用しています。
 - **`npm run build-storybook`**  
   Storybook をビルドします。
 
----
-
-以下は修正版のディレクトリ構成を反映したREADMEです：
+- **`npm run generate:swagger`**  
+  OpenAPI 定義から TypeScript のクライアントコードを生成します。
 
 ---
 
@@ -126,43 +135,39 @@ openApiを使用しています。
 
 ## 自動生成ファイル（型）
 
-1. **Swagger/OpenAPI ファイルをもとに TypeScript クライアントコードを生成**
+### Swagger Codegen for TypeScript Client
 
-   プロジェクトに含まれる `./src/app/openApi/openapi.yml` ファイルを元に、`swagger-codegen` を使って TypeScript クライアントコードを生成します。このコード生成は、以下のシェルスクリプトと Docker コンテナを利用して行います。
+Swagger/OpenAPI 定義から TypeScript クライアントコードを自動生成する機能を提供しています。
 
-2. **シェルスクリプト実行**
+### 必要なファイル
 
-   自動生成用のシェルスクリプト `generate-api.sh` を実行することで、API クライアントの型定義ファイルが生成されます。
+- `src/app/openApi/openapi.yml`: Swagger/OpenAPI の定義ファイル
 
-   実行方法:
+### 使い方
 
-   ```bash
-   ./sh/generate-api.sh
-   ```
+#### 1. npm スクリプトを使用する場合
 
-   これにより、./src/types/autoFile フォルダ内に TypeScript の型ファイルが出力されます
+以下のコマンドを実行してください:
 
-### コンテナの起動とコード生成
-
-コンテナが起動し、API クライアントコードが指定した ./src/types/autoFile フォルダに自動的に出力されます。以下のコマンドでコンテナをビルドし、実行します。
-
-```
-docker-compose up --build
+```bash
+npm run generate:swagger
 ```
 
-これにより、API クライアントの型定義や関連ファイルが ./src/types/autoFile に出力されます。
+#### 2. シェルスクリプトを使用する場合
 
-### 生成されるファイルの例
+`generate-swagger.sh` を実行してください:
 
-- index.ts
-- api.ts
-- api_test.spec.ts
-- configuration.ts
-- custom.d.ts
-- gitignore
-- swagger-codegen-ignore
+```bash
+./sh/generate-swagger.sh
+```
 
-これらのファイルは TypeScript クライアントコードとして利用可能です。generate-api.sh または Docker コンテナを使ってこれらを自動生成し、プロジェクトで使用することができます。
+### 出力場所
+
+生成された TypeScript クライアントコードは以下のディレクトリに出力されます:
+
+```
+src/app/openApi/typescript
+```
 
 ---
 
@@ -200,5 +205,3 @@ docker-compose up --build
   API仕様やアーキテクチャ設計書など、追加のドキュメントを管理するディレクトリ。
 
 ---
-
-ご不明な点や改善案がありましたら、ぜひフィードバックをお寄せください！
