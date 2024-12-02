@@ -1,0 +1,11 @@
+# ベースイメージとして Swagger Codegen CLI を使用
+FROM swaggerapi/swagger-codegen-cli-v3
+
+# 作業ディレクトリを設定
+WORKDIR /local
+
+# 必要なファイルをコンテナ内にコピー (openapi.yml がローカルに存在する前提)
+COPY ./openapi.yml /local/openapi.yml
+
+# TypeScript クライアントコードを生成するコマンド
+CMD ["generate", "-i", "/local/openapi.yml", "-l", "typescript-fetch", "-o", "/local/out/typescript", "--additional-properties=typescriptThreePlus=true,supportsES6=true,nullableReferenceTypes=true"]
