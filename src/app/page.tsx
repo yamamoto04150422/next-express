@@ -3,6 +3,7 @@
 import Link from "next/link";
 import AuthButton from "./components/auth/AuthButton";
 import { Button } from "primereact/button";
+import { Card } from "primereact/card";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SiteStats } from "@/types/siteStats/SiteStats";
@@ -21,7 +22,6 @@ export default function Home() {
   }, [searchParams, router]);
 
   const [stats, setStats] = useState<SiteStats | null>(null);
-  // const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -41,29 +41,57 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <h1>Next.js OAuth Example</h1>
-      <AuthButton />
-      {error && <h1 style={{ color: "red" }}>{error}</h1>}
-      <p>検証</p>
-      <Link href="/register">
-        <Button label="新規会員登録" />
-      </Link>
-      <Link href="/sample">
-        <Button label="認証が不要な画面" />
-      </Link>
+    <div className="p-3">
+      <h1 className="text-center mb-4">Next.js OAuth Example</h1>
+      <div className="text-center mb-4">
+        <AuthButton />
+      </div>
+
+      {error && (
+        <h3 style={{ color: "red" }} className="text-center">
+          {error}
+        </h3>
+      )}
+
+      <div className="text-center mb-4">
+        <p>検証</p>
+        <Link href="/register">
+          <Button label="新規会員登録" className="p-button-primary p-mr-2" />
+        </Link>
+        <Link href="/sample">
+          <Button label="認証が不要な画面" className="p-button-secondary" />
+        </Link>
+      </div>
+
       {stats ? (
-        <div>
-          <h2>サイト統計情報</h2>
-          <ul>
-            <li>登録ユーザー数: {stats.totalUsers}</li>
-            <li>記事数: {stats.totalArticles}</li>
-            <li>日次アクティブユーザー数: {stats.dailyActiveUsers}</li>
-          </ul>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+          <Card
+            style={{ width: "100%", maxWidth: "400px" }}
+            className="text-center"
+          >
+            <h2>サイト統計情報</h2>
+            <h4>登録ユーザー数</h4>
+            <p>{stats.totalUsers}</p>
+            <h4>記事数</h4>
+            <p>{stats.totalArticles}</p>
+
+            <h4>日次アクティブユーザー数</h4>
+            <p>{stats.dailyActiveUsers}</p>
+          </Card>
         </div>
       ) : (
-        <p>統計情報を取得中...</p>
+        <div className="text-center p-mt-5">
+          <p>統計情報を取得中...</p>
+        </div>
       )}
-    </>
+    </div>
   );
 }
