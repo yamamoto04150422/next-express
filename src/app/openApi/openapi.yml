@@ -1,32 +1,36 @@
 openapi: 3.0.0
 info:
-  title: Sample API
+  title: サンプル API
   version: 1.0.0
+  description: 従業員、所属、およびサイト統計情報を管理するためのサンプル API。
+servers:
+  - url: http://localhost:3000
+    description: 開発環境
 paths:
-  /employees:
+  /api/employees:
     get:
-      summary: Get all employees
+      summary: 従業員一覧を取得
+      description: 登録されているすべての従業員の一覧を取得します。
       responses:
         "200":
-          description: A list of employees
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Employee"
-  /affiliations:
+          $ref: "#/components/responses/EmployeeListResponse"
+  /api/affiliations:
     get:
-      summary: Get all affiliations
+      summary: 所属一覧を取得
+      description: 登録されているすべての所属の一覧を取得します。
       responses:
         "200":
-          description: A list of affiliations
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Affiliation"
+          $ref: "#/components/responses/AffiliationListResponse"
+  /api/stats:
+    get:
+      summary: サイト統計情報を取得
+      description: サイトの全体概要を表示するための統計情報を返します。
+      responses:
+        "200":
+          $ref: "#/components/responses/SiteStatsResponse"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
 components:
   schemas:
     Employee:
@@ -34,12 +38,69 @@ components:
       properties:
         id:
           type: integer
+          example: 1
+          description: 従業員の一意の識別子
         name:
           type: string
+          example: John Doe
+          description: 従業員の名前
     Affiliation:
       type: object
       properties:
         id:
           type: integer
+          example: 10
+          description: 所属の一意の識別子
         name:
           type: string
+          example: Engineering
+          description: 所属の名前
+    SiteStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+          example: 1200
+          description: 登録済みのユーザー数
+        totalArticles:
+          type: integer
+          example: 350
+          description: サイト内の公開済み記事の総数
+        dailyActiveUsers:
+          type: integer
+          example: 89
+          description: 本日中にアクティブなユーザー数
+
+  responses:
+    EmployeeListResponse:
+      description: 従業員の一覧を含むレスポンス
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Employee"
+    AffiliationListResponse:
+      description: 所属の一覧を含むレスポンス
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Affiliation"
+    SiteStatsResponse:
+      description: サイトの統計情報を含むレスポンス
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SiteStats"
+    ServerError:
+      description: サーバーエラーが発生した場合のレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "サーバーエラーが発生しました"

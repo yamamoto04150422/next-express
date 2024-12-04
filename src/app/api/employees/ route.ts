@@ -1,4 +1,4 @@
-import { Employee } from "@/types/employee/Employee";
+import { Employee } from "@/types/employees/Employee";
 import { NextResponse } from "next/server";
 
 export async function GET() {
