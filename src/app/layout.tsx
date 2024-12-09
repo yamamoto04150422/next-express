@@ -6,6 +6,7 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "primereact/resources/primereact.min.css";
 import Providers from "./components/provider/Providers";
+import NavigationMegaMenu from "./components/organisms/navigationMegaMenu/NavigationMegaMenu";
 
 export default function RootLayout({
   children,
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NavigationMegaMenu />
+          {children}
+        </Providers>
       </body>
     </html>
   );
