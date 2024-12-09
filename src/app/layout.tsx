@@ -1,6 +1,5 @@
 "use client";
 
-// import type { Metadata } from "next";
 import "../styles/globals.css";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import "primeicons/primeicons.css";

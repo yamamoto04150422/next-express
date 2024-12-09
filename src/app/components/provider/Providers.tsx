@@ -1,5 +1,6 @@
 "use client";
 
+// import type { Metadata } from "next";
 import { PrimeReactProvider, addLocale, locale } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
