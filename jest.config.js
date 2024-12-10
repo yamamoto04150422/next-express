@@ -11,6 +11,11 @@ const customJestConfig = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"], // ここでセットアップファイルを指定
 
   testEnvironment: "@happy-dom/jest-environment",
+  // playwrightとの競合を避けるために指定
+  testMatch: [
+    "**/*.test.tsx", // .test.tsx 拡張子のテストファイル
+    "**/*.test.ts", // .test.ts 拡張子のテストファイル
+  ],
 };
 
 module.exports = createJestConfig(customJestConfig);
