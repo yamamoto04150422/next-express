@@ -12,7 +12,9 @@
     "test:coverage": "jest --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "generate:swagger": "docker build -t swagger-codegen -f src/app/openApi/Dockerfile.codegen src/app/openApi && docker run --rm -v $(pwd)/src/app/openApi:/local swagger-codegen"
+    "generate:swagger": "docker build -t swagger-codegen -f src/app/openApi/Dockerfile.codegen src/app/openApi && docker run --rm -v $(pwd)/src/app/openApi:/local swagger-codegen",
+    "playwright:test": "playwright test",
+    "playwright:test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
     "@happy-dom/jest-environment": "^15.11.6",
+    "@playwright/test": "^1.49.1",
     "@storybook/addon-essentials": "^8.4.5",
     "@storybook/addon-interactions": "^8.4.5",
     "@storybook/addon-onboarding": "^8.4.5",
