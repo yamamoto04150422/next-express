@@ -24,7 +24,7 @@
 - **フォーム管理**：`react-hook-form` + `yup` を用いたバリデーション
 - **データ取得とキャッシュ管理**：`@tanstack/react-query`
 - **UI構築**：`primereact` を用いた高品質なコンポーネント
-- **テスト環境**：`jest` と `@testing-library/react` によるテストフレームワーク
+- **テスト環境**：`jest` と `@testing-library/react`と`playwright` によるテストフレームワーク
 - **コンポーネント開発**：`storybook` によるUI開発
 
 ---
@@ -56,7 +56,6 @@
 
    ```
    docker-compose up -d
-
    ```
 
    1. [http://localhost:3000](http://localhost:3000) にアクセスして動作を確認してください。
@@ -98,6 +97,12 @@
 
 - **`npm run generate:swagger`**  
   OpenAPI 定義から TypeScript のクライアントコードを生成します。
+
+- **`npm run playwright:test`**  
+  e2eテストを実行します
+
+- **`npm run playwright:test:ui`**  
+  e2eテストを実行します（UI上で確認可能）
 
 ---
 
