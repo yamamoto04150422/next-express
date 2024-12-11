@@ -104,6 +104,9 @@
 - **`npm run playwright:test:ui`**  
   e2eテストを実行します（UI上で確認可能）
 
+- **`npm run playwright:codegen`**  
+  UI上で操作してe2eテストのテストコードを効率的に記載します
+
 ---
 
 ## ディレクトリ構成
