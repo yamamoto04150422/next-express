@@ -3,7 +3,6 @@
 import MaskedCalendar from "@/app/components/molecules/maskedCalendar/MaskedCalendar";
 import { COLUMN_POSITIONS, Grid, GridItem } from "@/styles/grid/Grid";
 import { Affiliation } from "@/types/affiliation/Affiliation";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
@@ -20,12 +19,13 @@ const items = [
     label: "仮登録",
   },
   {
-    label: "認証",
+    label: "プラン選択",
   },
   {
     label: "登録完了",
   },
 ];
+
 type FormValues = {
   username: string;
   name: string;
@@ -40,19 +40,11 @@ const fetchAffiliations = async (): Promise<Affiliation[]> => {
 };
 
 export default function RegisterPage() {
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
 
-  // 初期データを取得
-  const {
-    data: affiliations,
-    // error,
-    // isLoading,
-  } = useQuery<Affiliation[], Error>({
-    queryKey: ["affiliations"], // キャッシュキー
-    queryFn: fetchAffiliations, // データ取得関数
-    enabled: isButtonClicked, // ボタンがクリックされたときにのみ実行
-    staleTime: 5 * 60 * 1000, // 5分間はデータを再フェッチしない
-  });
+  const [selectedValue, setSelectedValue] = useState("");
+
+  const [step, setStep] = useState(0);
 
   // バリデーションスキーマ
   const schema = yup.object().shape({
@@ -71,114 +63,145 @@ export default function RegisterPage() {
     resolver: yupResolver(schema), // yupを適用
   });
 
-  const onClickAffiliations = () => {
-    setIsButtonClicked(true); // ボタンクリック時にデータ取得を有効にする
+  const onClickAffiliations = async () => {
+    const data = await fetchAffiliations();
+    setAffiliations(data);
   };
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
+    setStep(1);
   };
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  // ボタンのアクション
+  const onButtonClick = (rowData: Affiliation) => {
+    setSelectedValue(rowData.name);
+    setAffiliations([]);
+  };
 
-  // if (error instanceof Error) {
-  //   return <div>Error: {error.message}</div>;
-  // }
+  // アクションボタンのテンプレート
+  const actionTemplate = (rowData: Affiliation) => {
+    return (
+      <Button
+        label="選択"
+        type="button"
+        onClick={() => onButtonClick(rowData)}
+      />
+    );
+  };
 
   return (
     <>
-      <Steps model={items} activeIndex={0} />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={styles.container}>
-          <Card
-            title="新規会員登録"
-            footer={<Button type="submit">登録</Button>}
-            style={{ width: "85%" }}
-          >
-            <Grid>
-              <GridItem $isLabel={true}>
-                <p>ユーザー名:</p>
-              </GridItem>
-              <GridItem $isLabel={false}>
-                <div className="w-full">
-                  <InputText
-                    type="text"
-                    {...register("username", {
-                      required: "ユーザー名は必須です",
-                    })}
-                  />
-                  {errors.username && (
-                    <p style={{ color: "red" }}>{errors.username.message}</p>
+      {step === 0 && (
+        <div>
+          <Steps model={items} activeIndex={step} />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div style={styles.container}>
+              <Card
+                title="新規会員登録"
+                footer={<Button type="submit">登録</Button>}
+                style={{ width: "85%" }}
+              >
+                <Grid>
+                  <GridItem $isLabel={true}>
+                    <p>ユーザー名:</p>
+                  </GridItem>
+                  <GridItem $isLabel={false}>
+                    <div className="w-full">
+                      <InputText
+                        type="text"
+                        {...register("username", {
+                          required: "ユーザー名は必須です",
+                        })}
+                      />
+                      {errors.username && (
+                        <p style={{ color: "red" }}>
+                          {errors.username.message}
+                        </p>
+                      )}
+                    </div>
+                  </GridItem>
+                  <GridItem
+                    $isLabel={true}
+                    $column={COLUMN_POSITIONS.pc.rightLabelWidth}
+                  >
+                    <p>名称:</p>
+                  </GridItem>
+                  <GridItem
+                    $isLabel={false}
+                    $column={COLUMN_POSITIONS.pc.rightInputWidth}
+                  >
+                    <div className="w-full">
+                      <InputText
+                        type="text"
+                        {...register("name", { required: "名称は必須です" })}
+                      />
+                      {errors.name && (
+                        <p style={{ color: "red" }}>{errors.name.message}</p>
+                      )}
+                    </div>
+                  </GridItem>
+                </Grid>
+                <Grid>
+                  <GridItem $isLabel={true}>
+                    <p>住所:</p>
+                  </GridItem>
+                  <GridItem $isLabel={false}>
+                    <InputText type="text" />
+                  </GridItem>
+                </Grid>
+                <Grid>
+                  <GridItem $isLabel={true}>
+                    <p>生年月日:</p>
+                  </GridItem>
+                  <GridItem $isLabel={false}>
+                    <MaskedCalendar id="birthDay" colorChangeDates={[]} />
+                  </GridItem>
+                </Grid>
+                <Grid>
+                  <GridItem $isLabel={true}>
+                    <p>所属:</p>
+                  </GridItem>
+                  <GridItem $isLabel={false}>
+                    <div className="p-inputgroup flex-1">
+                      <InputText
+                        type="text"
+                        name="grop"
+                        value={selectedValue}
+                      />
+                      <Button
+                        type="button"
+                        icon="pi pi-search"
+                        onClick={onClickAffiliations}
+                      />
+                    </div>
+                  </GridItem>
+                </Grid>
+                <div style={{ padding: 20 }}>
+                  {affiliations.length > 0 && (
+                    <div>
+                      <DataTable value={affiliations} rowHover showGridlines>
+                        <Column field="id" header="ID" />
+                        <Column field="name" header="名称" />
+                        <Column
+                          body={actionTemplate}
+                          style={{ width: "120px", textAlign: "center" }}
+                        />
+                      </DataTable>
+                    </div>
                   )}
                 </div>
-              </GridItem>
-              <GridItem
-                $isLabel={true}
-                $column={COLUMN_POSITIONS.pc.rightLabelWidth}
-              >
-                <p>名称:</p>
-              </GridItem>
-              <GridItem
-                $isLabel={false}
-                $column={COLUMN_POSITIONS.pc.rightInputWidth}
-              >
-                <div className="w-full">
-                  <InputText
-                    type="text"
-                    {...register("name", { required: "名称は必須です" })}
-                  />
-                  {errors.name && (
-                    <p style={{ color: "red" }}>{errors.name.message}</p>
-                  )}
-                </div>
-              </GridItem>
-            </Grid>
-            <Grid>
-              <GridItem $isLabel={true}>
-                <p>住所:</p>
-              </GridItem>
-              <GridItem $isLabel={false}>
-                <InputText type="text" />
-              </GridItem>
-            </Grid>
-            <Grid>
-              <GridItem $isLabel={true}>
-                <p>生年月日:</p>
-              </GridItem>
-              <GridItem $isLabel={false}>
-                <MaskedCalendar id="birthDay" colorChangeDates={[]} />
-              </GridItem>
-            </Grid>
-            <Grid>
-              <GridItem $isLabel={true}>
-                <p>所属:</p>
-              </GridItem>
-              <GridItem $isLabel={false}>
-                <div className="p-inputgroup flex-1">
-                  <InputText type="text" />
-                  <Button
-                    type="button"
-                    icon="pi pi-search"
-                    onClick={onClickAffiliations}
-                  />
-                </div>
-              </GridItem>
-            </Grid>
-          </Card>
-        </div>
-        <Card>
-          {affiliations && (
-            <div>
-              <DataTable value={affiliations}>
-                <Column field="id" header="ID" />
-                <Column field="name" header="名称" />
-              </DataTable>
+              </Card>
             </div>
-          )}
-        </Card>
-      </form>
+          </form>
+        </div>
+      )}
+      {step === 1 && (
+        <div>
+          <Steps model={items} activeIndex={step} />
+          <div style={{ padding: "30px 80px" }}></div>
+        </div>
+      )}
     </>
   );
 }
@@ -188,7 +211,5 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // width: "60%",
-    // minWidth: "300px",
   },
 };
