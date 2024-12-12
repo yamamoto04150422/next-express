@@ -10,7 +10,7 @@
 2. [セットアップ方法](#セットアップ方法)
 3. [利用可能なスクリプト](#利用可能なスクリプト)
 4. [ディレクトリ構成](#ディレクトリ構成)
-5. [自動生成ファイル（型）](#自動生成ファイル（型）)
+5. [自動生成ファイル/型定義](#自動生成ファイル/型定義)
 6. [主な依存関係](#主な依存関係)
 7. [開発環境の依存関係](#開発環境の依存関係)
 8. [その他のドキュメント](#その他のドキュメント)
@@ -19,13 +19,13 @@
 
 ## 概要
 
-このアプリケーションは以下の主要機能をサポートしています：
+このアプリケーションの主な特徴は以下の通りです：
 
-- **フォーム管理**：`react-hook-form` + `yup` を用いたバリデーション
-- **データ取得とキャッシュ管理**：`@tanstack/react-query`
-- **UI構築**：`primereact` を用いた高品質なコンポーネント
-- **テスト環境**：`jest` と `@testing-library/react`と`playwright` によるテストフレームワーク
-- **コンポーネント開発**：`storybook` によるUI開発
+- **フォーム管理**：`react-hook-form` + `yup` による高効率なバリデーション。
+- **データ取得とキャッシュ**：`@tanstack/react-query` によるデータの管理と最適化。
+- **高品質なUI**：`primereact` を活用した美しいデザインと再利用可能なコンポーネント。
+- **テスト環境**：`jest`, `@testing-library/react`, `playwright` による単体・統合・E2Eテスト。
+- **UI開発支援**：`storybook` を用いた効率的なコンポーネント開発。
 
 ---
 
@@ -141,7 +141,7 @@
 
 ---
 
-## 自動生成ファイル（型）
+## 自動生成ファイル/型定義
 
 ### Swagger Codegen for TypeScript Client
 
@@ -177,6 +177,12 @@ npm run generate:swagger
 src/app/openApi/typescript
 ```
 
+## storybookのテンプレートファイル作成
+
+```
+node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionButton.tsx
+```
+
 ---
 
 ## 主な依存関係
@@ -195,6 +201,7 @@ src/app/openApi/typescript
 - **[jest](https://jestjs.io/)**：JavaScriptのテストフレームワーク。
 - **[storybook](https://storybook.js.org/)**：UIコンポーネント開発環境。
 - **[typescript](https://www.typescriptlang.org/)**：静的型付けをサポートするJavaScriptスーパーセット。
+- **[playwright](https://playwright.dev/)**：E2Eテストフレームワーク。
 
 ---
 
