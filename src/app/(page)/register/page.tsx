@@ -13,7 +13,6 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Chip } from "primereact/chip";
 
 const items = [
   {
@@ -25,12 +24,6 @@ const items = [
   {
     label: "登録完了",
   },
-];
-const chips = [
-  { label: "Apple", icon: "pi pi-apple" },
-  { label: "Facebook", icon: "pi pi-facebook", removable: true },
-  { label: "Google", icon: "pi pi-google", removable: true },
-  { label: "Microsoft", icon: "pi pi-microsoft", removable: true },
 ];
 
 type FormValues = {
@@ -206,16 +199,7 @@ export default function RegisterPage() {
       {step === 1 && (
         <div>
           <Steps model={items} activeIndex={step} />
-          <div style={{ padding: "30px 80px" }}>
-            {chips.map((chip, index) => (
-              <Chip
-                key={chip.label}
-                label={chip.label}
-                icon={chip.icon}
-                removable={chip.removable}
-              />
-            ))}
-          </div>
+          <div style={{ padding: "30px 80px" }}></div>
         </div>
       )}
     </>
