@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { useRouter } from "next/navigation";
 
 const items = [
   {
@@ -40,6 +41,8 @@ const fetchAffiliations = async (): Promise<Affiliation[]> => {
 };
 
 export default function RegisterPage() {
+  const router = useRouter();
+
   const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
 
   const [selectedValue, setSelectedValue] = useState("");
@@ -93,113 +96,166 @@ export default function RegisterPage() {
   return (
     <>
       {step === 0 && (
-        <div>
+        <div style={styles.commonContainer}>
           <Steps model={items} activeIndex={step} />
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div style={styles.container}>
-              <Card
-                title="新規会員登録"
-                footer={<Button type="submit">登録</Button>}
-                style={{ width: "85%" }}
-              >
-                <Grid>
-                  <GridItem $isLabel={true}>
-                    <p>ユーザー名:</p>
-                  </GridItem>
-                  <GridItem $isLabel={false}>
-                    <div className="w-full">
-                      <InputText
-                        type="text"
-                        {...register("username", {
-                          required: "ユーザー名は必須です",
-                        })}
-                      />
-                      {errors.username && (
-                        <p style={{ color: "red" }}>
-                          {errors.username.message}
-                        </p>
-                      )}
-                    </div>
-                  </GridItem>
-                  <GridItem
-                    $isLabel={true}
-                    $column={COLUMN_POSITIONS.pc.rightLabelWidth}
-                  >
-                    <p>名称:</p>
-                  </GridItem>
-                  <GridItem
-                    $isLabel={false}
-                    $column={COLUMN_POSITIONS.pc.rightInputWidth}
-                  >
-                    <div className="w-full">
-                      <InputText
-                        type="text"
-                        {...register("name", { required: "名称は必須です" })}
-                      />
-                      {errors.name && (
-                        <p style={{ color: "red" }}>{errors.name.message}</p>
-                      )}
-                    </div>
-                  </GridItem>
-                </Grid>
-                <Grid>
-                  <GridItem $isLabel={true}>
-                    <p>住所:</p>
-                  </GridItem>
-                  <GridItem $isLabel={false}>
-                    <InputText type="text" />
-                  </GridItem>
-                </Grid>
-                <Grid>
-                  <GridItem $isLabel={true}>
-                    <p>生年月日:</p>
-                  </GridItem>
-                  <GridItem $isLabel={false}>
-                    <MaskedCalendar id="birthDay" colorChangeDates={[]} />
-                  </GridItem>
-                </Grid>
-                <Grid>
-                  <GridItem $isLabel={true}>
-                    <p>所属:</p>
-                  </GridItem>
-                  <GridItem $isLabel={false}>
-                    <div className="p-inputgroup flex-1">
-                      <InputText
-                        type="text"
-                        name="grop"
-                        value={selectedValue}
-                      />
-                      <Button
-                        type="button"
-                        icon="pi pi-search"
-                        onClick={onClickAffiliations}
-                      />
-                    </div>
-                  </GridItem>
-                </Grid>
-                <div style={{ padding: 20 }}>
-                  {affiliations.length > 0 && (
-                    <div>
-                      <DataTable value={affiliations} rowHover showGridlines>
-                        <Column field="id" header="ID" />
-                        <Column field="name" header="名称" />
-                        <Column
-                          body={actionTemplate}
-                          style={{ width: "120px", textAlign: "center" }}
-                        />
-                      </DataTable>
-                    </div>
-                  )}
+            <Card
+              title="新規会員登録"
+              footer={
+                <div style={styles.cardFooterButton}>
+                  <Button type="submit">登録</Button>
                 </div>
-              </Card>
-            </div>
+              }
+            >
+              <Grid>
+                <GridItem $isLabel={true}>
+                  <p>ユーザー名:</p>
+                </GridItem>
+                <GridItem $isLabel={false}>
+                  <div className="w-full">
+                    <InputText
+                      type="text"
+                      {...register("username", {
+                        required: "ユーザー名は必須です",
+                      })}
+                    />
+                    {errors.username && (
+                      <p style={{ color: "red" }}>{errors.username.message}</p>
+                    )}
+                  </div>
+                </GridItem>
+                <GridItem
+                  $isLabel={true}
+                  $column={COLUMN_POSITIONS.pc.rightLabelWidth}
+                >
+                  <p>名称:</p>
+                </GridItem>
+                <GridItem
+                  $isLabel={false}
+                  $column={COLUMN_POSITIONS.pc.rightInputWidth}
+                >
+                  <div className="w-full">
+                    <InputText
+                      type="text"
+                      {...register("name", { required: "名称は必須です" })}
+                    />
+                    {errors.name && (
+                      <p style={{ color: "red" }}>{errors.name.message}</p>
+                    )}
+                  </div>
+                </GridItem>
+              </Grid>
+              <Grid>
+                <GridItem $isLabel={true}>
+                  <p>住所:</p>
+                </GridItem>
+                <GridItem $isLabel={false}>
+                  <InputText type="text" />
+                </GridItem>
+              </Grid>
+              <Grid>
+                <GridItem $isLabel={true}>
+                  <p>生年月日:</p>
+                </GridItem>
+                <GridItem $isLabel={false}>
+                  <MaskedCalendar id="birthDay" colorChangeDates={[]} />
+                </GridItem>
+              </Grid>
+              <Grid>
+                <GridItem $isLabel={true}>
+                  <p>所属:</p>
+                </GridItem>
+                <GridItem $isLabel={false}>
+                  <div className="p-inputgroup flex-1">
+                    <InputText type="text" name="grop" value={selectedValue} />
+                    <Button
+                      type="button"
+                      icon="pi pi-search"
+                      onClick={onClickAffiliations}
+                    />
+                  </div>
+                </GridItem>
+              </Grid>
+              <div style={{ padding: 20 }}>
+                {affiliations.length > 0 && (
+                  <div>
+                    <DataTable value={affiliations} rowHover showGridlines>
+                      <Column field="id" header="ID" />
+                      <Column field="name" header="名称" />
+                      <Column
+                        body={actionTemplate}
+                        style={{ width: "120px", textAlign: "center" }}
+                      />
+                    </DataTable>
+                  </div>
+                )}
+              </div>
+            </Card>
           </form>
         </div>
       )}
       {step === 1 && (
-        <div>
+        <div style={styles.commonContainer}>
           <Steps model={items} activeIndex={step} />
-          <div style={{ padding: "30px 80px" }}></div>
+          <Card
+            title="免責事項"
+            footer={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "10px",
+                  padding: "0 20px",
+                }}
+              >
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setStep(0);
+                  }}
+                >
+                  戻る
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setStep(2);
+                  }}
+                >
+                  登録
+                </Button>
+              </div>
+            }
+          >
+            <p className="m-0">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Inventore sed consequuntur error repudiandae numquam deserunt
+              quisquam repellat libero asperiores earum nam nobis, culpa ratione
+              quam perferendis esse, cupiditate neque quas!
+            </p>
+          </Card>
+        </div>
+      )}
+      {step === 2 && (
+        <div style={styles.commonContainer}>
+          <Steps model={items} activeIndex={step} />
+          <Card
+            title="登録完了"
+            footer={
+              <div style={styles.cardFooterButton}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    router.replace("/");
+                  }}
+                >
+                  Homeへ戻る
+                </Button>
+              </div>
+            }
+          >
+            <p className="m-0">登録が完了しました!</p>
+          </Card>
         </div>
       )}
     </>
@@ -207,9 +263,11 @@ export default function RegisterPage() {
 }
 
 const styles = {
-  container: {
+  commonContainer: {
+    padding: "30px",
+  },
+  cardFooterButton: {
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-end",
   },
 };
