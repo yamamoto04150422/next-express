@@ -23,6 +23,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@tanstack/react-query": "^5.61.5",
+    "jotai": "^2.10.3",
     "next": "15.0.3",
     "next-auth": "^4.24.10",
     "primeflex": "^3.3.1",
