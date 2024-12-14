@@ -12,8 +12,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useState } from "react";
 import { items } from "@/app/utils/data/StepsItems";
+import { useAtom } from "jotai";
+import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 
-type FormValues = {
+export type FormValues = {
   username: string;
   name: string;
 };
@@ -35,6 +37,8 @@ export default function StepZero({
 
   const [selectedValue, setSelectedValue] = useState("");
 
+  const [formData, setFormData] = useAtom(formDataRegisterAtom);
+
   // バリデーションスキーマ
   const schema = yup.object().shape({
     username: yup
@@ -49,6 +53,7 @@ export default function StepZero({
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
+    defaultValues: formData,
     resolver: yupResolver(schema), // yupを適用
   });
 
@@ -58,6 +63,7 @@ export default function StepZero({
   };
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
+    setFormData(data);
     console.log(data);
     setStep(1);
   };
