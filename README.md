@@ -1,4 +1,4 @@
-# Next.js Express プロジェクト
+## Next.js Express プロジェクト
 
 このプロジェクトは **Next.js** を使用して構築されたアプリケーションで、**React Hook Form** によるフォーム管理や **TanStack React Query** によるデータフェッチ機能を統合しています。また、UIコンポーネントには **PrimeReact** を採用し、スタイリングには **Styled-Components** を使用しています。
 
@@ -13,7 +13,8 @@
 5. [自動生成ファイル/型定義](#自動生成ファイル/型定義)
 6. [主な依存関係](#主な依存関係)
 7. [開発環境の依存関係](#開発環境の依存関係)
-8. [その他のドキュメント](#その他のドキュメント)
+8. [Jotai](#jotai)
+9. [その他のドキュメント](#その他のドキュメント)
 
 ---
 
@@ -116,6 +117,7 @@
 ├── src/                     # アプリケーションのソースコード
 │   ├── app/                 # Next.js App Router 構造
 │   │   ├── (page)/          # ルーティングページ
+│   │   ├── atoms/           # jotai
 │   │   ├── api/             # APIエンドポイント
 │   │   ├── components/      # 再利用可能なUIコンポーネント
 │   │   │   ├── atoms/       # 最小単位のUIコンポーネント
@@ -192,6 +194,19 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
 - **[yup](https://github.com/jquense/yup)**：スキーマベースのバリデーションライブラリ。
 - **[primereact](https://www.primereact.org/)**：洗練されたUIコンポーネント。
 - **[styled-components](https://styled-components.com/)**：CSS-in-JSスタイリングライブラリ。
+- **[jotai](https://github.com/pmndrs/jotai)**：Reactの状態管理ライブラリ。
+
+---
+
+## Jotai
+
+**Jotai** は、簡潔で強力な状態管理ライブラリで、**React** として利用されることが多いです。
+
+状態を管理するために `atom` を使い、コンポーネント間で状態を簡単に共有できます。
+
+- **状態管理の効率化**: 各状態は `atom` として定義され、`useAtom` フックを使って簡単に状態を読み書きできます。
+- **パフォーマンス**: Jotaiはコンポーネントの再レンダリングを最小限に抑える設計になっており、大規模アプリケーションでもパフォーマンスを維持しやすいです。
+- **簡易性**: `useAtom` フックを使用して、状態の管理が直感的に行えます。
 
 ---
 
