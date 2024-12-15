@@ -236,3 +236,22 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
   API仕様やアーキテクチャ設計書など、追加のドキュメントを管理するディレクトリ。
 
 ---
+
+## 補足
+
+### 秘密鍵を安全に生成する
+
+Node.js でランダムな文字列を生成する方法
+
+```
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+### Next.js のキャッシュやビルド関連のファイルが破損していた場合
+
+```
+rm -rf .next
+npm run dev
+```
+
+---
