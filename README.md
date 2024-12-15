@@ -236,3 +236,14 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
   API仕様やアーキテクチャ設計書など、追加のドキュメントを管理するディレクトリ。
 
 ---
+
+## 補足
+
+### Next.js のキャッシュやビルド関連のファイルが破損していた場合
+
+```
+rm -rf .next
+npm run dev
+```
+
+---
