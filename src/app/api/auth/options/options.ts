@@ -19,17 +19,15 @@ export const options: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // credentials に入力が渡ってくる
-        // 環境変数からIDとパスワードを取得
         const envId = process.env.CREDENTIALS_ID;
         const envPassword = process.env.CREDENTIALS_PASSWORD;
 
-        // 入力された情報と比較
+        // 入力されたIDとパスワードと環境変数を比較
         if (
           credentials?.id === envId &&
           credentials?.password === envPassword
         ) {
-          return { id: "29472084752894723890248902" }; // 任意のオブジェクトを返す
+          return { id: "29472084752894723890248902" }; // 任意のユーザーIDを返す
         }
 
         return null; // 認証失敗
@@ -50,6 +48,7 @@ export const options: NextAuthOptions = {
       clientSecret: process.env.APPLE_CLIENT_SECRET!,
     }),
   ],
+
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account && profile) {
