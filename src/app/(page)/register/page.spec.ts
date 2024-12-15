@@ -21,6 +21,17 @@ test("register validation", async ({ page, browserName }) => {
   await page.getByLabel("Password").click();
   await page.getByLabel("Password").fill(CREDENTIALS_PASSWORD);
 
+  // スクリーンショットを保存
+  await expect(page).toHaveScreenshot(`${browserName}/auth.png`, {
+    // ぺージ全体をキャプチャ
+    fullPage: true,
+    // デバイススケールやアニメーションを無効にする
+    scale: "device",
+    animations: "disabled",
+    // 画像間の差分を許容する度合いを数値で指定する。以下の場合は差分が10%未満は許容される
+    threshold: 0.1,
+  });
+
   // ログインボタンをクリック
   await page
     .getByRole("button", { name: "Sign in with Sample Project" })
