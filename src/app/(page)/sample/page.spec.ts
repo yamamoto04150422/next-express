@@ -16,7 +16,14 @@ test("should check if the element exists", async ({ page }) => {
   // リンクをクリック
   await page.getByRole("link", { name: "認証が不要な画面" }).click();
 
-  // 要素の存在を確認
-  const targetElement = await page.locator("div.sc-gtLWhw.eARkff > p");
-  await expect(targetElement).toHaveText("組織１組織１組織１組織１");
+  // 要素が表示されるまで待機
+  await page.waitForSelector("p:has-text('組織１組織１組織１組織１')", {
+    state: "visible",
+  });
+
+  // 要素を取得
+  const targetElement = page.locator("p:has-text('組織１組織１組織１組織１')");
+
+  // 要素の表示を検証
+  await expect(targetElement).toBeVisible();
 });
