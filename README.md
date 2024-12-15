@@ -217,6 +217,7 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
 - **[storybook](https://storybook.js.org/)**：UIコンポーネント開発環境。
 - **[typescript](https://www.typescriptlang.org/)**：静的型付けをサポートするJavaScriptスーパーセット。
 - **[playwright](https://playwright.dev/)**：E2Eテストフレームワーク。
+- **[dotenv](https://www.dotenv.org/docs/)**：テストコード内で環境変数を参照するために利用。
 
 ---
 
