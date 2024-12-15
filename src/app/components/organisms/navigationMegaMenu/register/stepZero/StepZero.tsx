@@ -4,14 +4,12 @@ import { Affiliation } from "@/types/affiliation/Affiliation";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
-import { Steps } from "primereact/steps";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useState } from "react";
-import { items } from "@/app/utils/data/StepsItems";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 
@@ -86,7 +84,6 @@ export default function StepZero({
   };
   return (
     <div style={styles.commonContainer}>
-      <Steps model={items} activeIndex={0} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card
           title="新規会員登録"

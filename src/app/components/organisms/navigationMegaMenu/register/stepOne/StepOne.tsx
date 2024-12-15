@@ -1,7 +1,5 @@
-import { items } from "@/app/utils/data/StepsItems";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { Steps } from "primereact/steps";
 
 export default function StepOne({
   setStep,
@@ -10,7 +8,6 @@ export default function StepOne({
 }) {
   return (
     <div style={{ padding: "30px" }}>
-      <Steps model={items} activeIndex={1} />
       <Card
         title="免責事項"
         footer={
