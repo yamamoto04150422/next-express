@@ -16,3 +16,5 @@ npm init playwright
 | **ST** (System Test)         | システムテスト | システム全体が仕様通りに動作するかを確認                             | フロントエンドからバックエンド、データベースまで全体をテスト   | Selenium, Cypress, Playwright, E2Eツール, React Testing Library |
 
 **React Testing Library** は、特に **単体テスト** や **統合テストA** に使われるツールで、UIコンポーネントのテストや、複数のコンポーネント間の連携をテストする際に有用です。
+
+toHaveScreenshotの場合は〇〇.spec.tsx直下にファイルが出力されるのでどう対処しようか
