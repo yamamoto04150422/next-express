@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())   // ユーザーIDを文字列型で自動生成
+  email     String   @unique                // ユーザーのメールアドレス
+  name      String?                         // ユーザー名
+  image     String?                         // ユーザーの画像URL
+  createdAt DateTime @default(now())        // ユーザー作成日時
+  updatedAt DateTime @updatedAt             // ユーザー更新日時
+
+  // NextAuth で使用する認証方法と関連するフィールド
+  accounts  Account[]                       // ユーザーの関連アカウント
+}
+
+model Account {
+  id                 Int      @id @default(autoincrement())
+  userId             String
+  provider           String
+  providerAccountId  String   @unique
+  refresh_token      String?  // プロバイダーに応じてトークンが保存される
+  access_token       String?  // アクセストークン
+  expires_at         Int?     // トークンの有効期限
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user               User     @relation(fields: [userId], references: [id])  // ユーザーとのリレーション
+}

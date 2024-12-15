@@ -221,6 +221,14 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
 
 ---
 
+## prisma
+
+```
+npx prisma migrate dev --name add_user_and_account_models
+```
+
+---
+
 ## その他のドキュメント
 
 - **`CHANGELOG.md`**  

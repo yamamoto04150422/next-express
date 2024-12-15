@@ -6,6 +6,8 @@ npx prisma init
 
 brew services start postgresql
 
+npm install next-auth @next-auth/prisma-adapter
+
 ### 1. HomebrewでPostgreSQLを再インストール
 
 PostgreSQLのインストールが難しい場合、Homebrewを使って再インストールするのが一番簡単です。これにより、設定がリセットされ、デフォルトの設定が適用されます。
