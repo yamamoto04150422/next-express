@@ -1,13 +1,18 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
+import path from "path";
+
 dotenv.config();
 const { NEXTAUTH_URL, CREDENTIALS_ID, CREDENTIALS_PASSWORD } = process.env;
 
-test("register validation", async ({ page }) => {
+test("register validation", async ({ page, browserName }) => {
   // 環境変数が定義されているかチェック
   if (!NEXTAUTH_URL || !CREDENTIALS_ID || !CREDENTIALS_PASSWORD) {
     throw new Error("環境変数が未定義です");
   }
+
+  // // スクリーンショット保存用のディレクトリを作成
+  const screenshotDir = path.join(__dirname, "screenshots");
 
   await page.goto(NEXTAUTH_URL);
 
@@ -38,4 +43,14 @@ test("register validation", async ({ page }) => {
   // バリデーションエラーメッセージを確認
   await expect(page.getByText("ユーザー名は必須です")).toBeVisible();
   await expect(page.getByText("名称は必須です")).toBeVisible();
+
+  // ブラウザ名をディレクトリ名として利用
+  // const browserName = browser.; // 'chromium', 'firefox', or 'webkit'
+  const screenshotPath = path.join(
+    screenshotDir,
+    `${browserName}-register-validation.png`
+  );
+
+  // スクリーンショットを保存
+  await expect(page).toHaveScreenshot(screenshotDir);
 });
