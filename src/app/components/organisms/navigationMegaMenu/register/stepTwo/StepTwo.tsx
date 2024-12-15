@@ -1,15 +1,12 @@
 import { Card } from "primereact/card";
-import { Steps } from "primereact/steps";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
-import { items } from "@/app/utils/data/StepsItems";
 
 export default function StepTwo() {
   const router = useRouter();
 
   return (
     <div style={{ padding: "30px" }}>
-      <Steps model={items} activeIndex={2} />
       <Card
         title="登録完了"
         footer={
