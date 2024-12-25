@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("toppage title", async ({ page }) => {
-  await page.goto("http://localhost:3000");
+  await page.goto("/");
 
   const h1Text = await page.textContent("h1.text-center.mb-4");
 
@@ -11,7 +11,7 @@ test("toppage title", async ({ page }) => {
 
 test("should check if the element exists", async ({ page }) => {
   // ページを開く
-  await page.goto("http://localhost:3000");
+  await page.goto("/");
 
   // リンクをクリック
   await page.getByRole("link", { name: "認証が不要な画面" }).click();
