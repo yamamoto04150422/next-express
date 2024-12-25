@@ -12,6 +12,8 @@ import { Column } from "primereact/column";
 import { useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
+import { userNameSchema } from "@/app/utils/validation/register/shema";
+import { requiredString } from "@/app/utils/validation/commonShema";
 
 export type FormValues = {
   username: string;
@@ -39,11 +41,8 @@ export default function StepZero({
 
   // バリデーションスキーマ
   const schema = yup.object().shape({
-    username: yup
-      .string()
-      .required("ユーザー名は必須です")
-      .min(3, "ユーザー名は3文字以上である必要があります"),
-    name: yup.string().required("名称は必須です"),
+    username: userNameSchema,
+    name: requiredString("名称"),
   });
 
   const {
