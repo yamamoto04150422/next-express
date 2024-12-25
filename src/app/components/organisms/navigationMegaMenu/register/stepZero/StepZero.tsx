@@ -4,7 +4,7 @@ import { Affiliation } from "@/types/affiliation/Affiliation";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
@@ -12,7 +12,6 @@ import { Column } from "primereact/column";
 import { useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
-import { userNameSchema } from "@/app/utils/validation/register/shema";
 import { requiredString } from "@/app/utils/validation/commonShema";
 
 export type FormValues = {
@@ -41,15 +40,11 @@ export default function StepZero({
 
   // バリデーションスキーマ
   const schema = yup.object().shape({
-    username: userNameSchema,
+    username: requiredString("ユーザ名"),
     name: requiredString("名称"),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: formData,
     resolver: yupResolver(schema), // yupを適用
   });
@@ -98,15 +93,16 @@ export default function StepZero({
             </GridItem>
             <GridItem $isLabel={false}>
               <div className="w-full">
-                <InputText
-                  type="text"
-                  {...register("username", {
-                    required: "ユーザー名は必須です",
-                  })}
+                <Controller
+                  name="username"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <>
+                      <InputText {...field} />
+                      {error && <p style={{ color: "red" }}>{error.message}</p>}
+                    </>
+                  )}
                 />
-                {errors.username && (
-                  <p style={{ color: "red" }}>{errors.username.message}</p>
-                )}
               </div>
             </GridItem>
             <GridItem
@@ -120,13 +116,16 @@ export default function StepZero({
               $column={COLUMN_POSITIONS.pc.rightInputWidth}
             >
               <div className="w-full">
-                <InputText
-                  type="text"
-                  {...register("name", { required: "名称は必須です" })}
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <>
+                      <InputText {...field} />
+                      {error && <p style={{ color: "red" }}>{error.message}</p>}
+                    </>
+                  )}
                 />
-                {errors.name && (
-                  <p style={{ color: "red" }}>{errors.name.message}</p>
-                )}
               </div>
             </GridItem>
           </Grid>
