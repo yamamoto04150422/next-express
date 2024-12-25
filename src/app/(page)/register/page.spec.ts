@@ -48,8 +48,8 @@ test("register validation", async ({ page, browserName }) => {
   await page.getByRole("button", { name: "登録" }).click();
 
   // バリデーションエラーメッセージを確認
-  await expect(page.getByText("ユーザー名は必須です")).toBeVisible();
-  await expect(page.getByText("名称は必須です")).toBeVisible();
+  await expect(page.getByText(/ユーザ名を入力してください/)).toBeVisible();
+  await expect(page.getByText(/名称を入力してください/)).toBeVisible();
 
   // スクリーンショットを保存
   await expect(page).toHaveScreenshot(`${browserName}/register.png`, {
