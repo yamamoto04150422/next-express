@@ -12,7 +12,7 @@ import { Column } from "primereact/column";
 import { useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
-import { requiredString } from "@/app/utils/validation/commonShema";
+import { requiredString } from "@/app/utils/validation/common/commonShema";
 
 export type FormValues = {
   username: string;
