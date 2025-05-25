@@ -1,4 +1,3 @@
-import * as Yup from "yup";
 import {
   requiredString,
   minLengthSchema,
@@ -6,11 +5,10 @@ import {
   fixedLengthSchema,
   noLeadingTrailingWhitespace,
   dateRangeSchema,
-  //   requiredArray,
   minArrayLength,
   maxArrayLength,
   arrayLengthRange,
-} from "./commonShema";
+} from "./commonSchema";
 
 describe("commonSchema", () => {
   test("requiredString: 必須入力エラー", async () => {

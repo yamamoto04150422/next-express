@@ -3,7 +3,7 @@ import {
   minLengthSchema,
   noLeadingTrailingWhitespace,
   requiredString,
-} from "../common/commonShema";
+} from "../common/commonSchema";
 
 const userInfo = "ユーザ名称";
 export const userNameSchema = requiredString(userInfo)
