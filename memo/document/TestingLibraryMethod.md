@@ -65,6 +65,55 @@ Testing Libraryでは、「ユーザーが実際に見る・操作する情報�
 | `level`       | 見出しのレベル（`heading`の時のみ、1〜6）        |
 | `description` | `aria-describedby`の内容でフィルタ（※試験的）    |
 
+# `fireEvent` より `userEvent` を使う理由（Jest + Testing Library）
+
+## 🔥 `fireEvent` の特徴
+
+- DOM イベントを「直接」発火する低レベルAPI
+- 例: `fireEvent.click(button)`
+- `onClick` などのハンドラが即座に呼ばれるだけ
+
+### ⚠️ 主な欠点
+
+- 実際のユーザー操作を正確に再現しない（フォーカス移動・時間経過などなし）
+- アクセシビリティ（a11y）を考慮した動作ではない
+- フォーム入力の流れなどを正しくテストできない場合がある
+
+---
+
+## 👤 `userEvent` の特徴
+
+- 実際のユーザー操作に近い高レベルAPI
+- 例: `userEvent.type(input, 'hello')` は1文字ずつ入力される
+- マウスやキーボードの操作を段階的に再現
+- `tab`, `click`, `selectOptions` など多くのユーザー動作をサポート
+
+### ✅ 主な利点
+
+- ユーザー視点の自然な挙動を再現できる
+- フォーカス移動や入力のタイミングなども含めてテストできる
+- 将来的なブラウザ仕様の変化にも強い
+- アクセシビリティの確認にも役立つ
+
+---
+
+## 📌 まとめ：使い分けの指針
+
+| シチュエーション                       | 推奨API        |
+| -------------------------------------- | -------------- |
+| 実際のユーザー操作を再現したいとき     | `userEvent` ✅ |
+| カスタムイベントの発火など特別なケース | `fireEvent` ⚠️ |
+
+## 🧪 例：`fireEvent` vs `userEvent`
+
+```ts
+// fireEvent: 即時に値が変わる
+fireEvent.change(input, { target: { value: "hello" } });
+
+// userEvent: 実際のタイプに近い（1文字ずつ入力）
+await userEvent.type(input, "hello");
+```
+
 ## 結論
 
 userEventを使うのは：
@@ -72,3 +121,7 @@ userEventを使うのは：
 「機械的なイベント発火」ではなく、「人間の操作」をシミュレートするため」
 
 基本的には userEvent を使い、どうしても必要なケースのみ fireEvent を使う。
+
+```
+
+```
