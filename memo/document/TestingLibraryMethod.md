@@ -64,3 +64,11 @@ Testing Libraryでは、「ユーザーが実際に見る・操作する情報�
 | `pressed`     | ボタンの押下状態（トグルボタン）                 |
 | `level`       | 見出しのレベル（`heading`の時のみ、1〜6）        |
 | `description` | `aria-describedby`の内容でフィルタ（※試験的）    |
+
+## 結論
+
+userEventを使うのは：
+
+「機械的なイベント発火」ではなく、「人間の操作」をシミュレートするため」
+
+基本的には userEvent を使い、どうしても必要なケースのみ fireEvent を使う。
