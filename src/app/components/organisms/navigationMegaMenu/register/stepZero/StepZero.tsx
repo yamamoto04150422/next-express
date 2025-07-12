@@ -13,19 +13,38 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
+import { useMutation } from "@tanstack/react-query";
 
+// Types
 export type FormValues = {
   username: string;
   name: string;
+  affiliation?: string;
 };
 
+// API Calls
 const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
   const response = await fetch(`/api/affiliations?name=${param}`);
-  if (!response.ok) {
-    throw new Error("データの取得に失敗しました");
-  }
+  if (!response.ok) throw new Error("データの取得に失敗しました");
   return response.json();
 };
+
+const registerUser = async (data: FormValues) => {
+  const response = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("登録に失敗しました");
+  return response.json();
+};
+
+// Validation Schema
+const schema = yup.object().shape({
+  username: requiredString("ユーザ名"),
+  name: requiredString("名称"),
+  affiliation: yup.string().optional(),
+});
 
 export default function StepZero({
   setStep,
@@ -34,35 +53,41 @@ export default function StepZero({
 }) {
   const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
 
-  const [selectedValue, setSelectedValue] = useState("");
-
   const [formData, setFormData] = useAtom(formDataRegisterAtom);
 
-  // バリデーションスキーマ
-  const schema = yup.object().shape({
-    username: requiredString("ユーザ名"),
-    name: requiredString("名称"),
-  });
+  console.log("jotai,formData", formData); // Jotaiのatomの値を確認
 
-  const { control, handleSubmit } = useForm<FormValues>({
-    defaultValues: formData,
+  const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
+    defaultValues: { username: "", name: "", affiliation: "" },
     resolver: yupResolver(schema), // yupを適用
   });
 
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      // 成功時の処理（画面遷移など）
+      console.log("登録成功", data);
+      setStep(1);
+    },
+    onError: (error) => {
+      console.error("登録エラー", error);
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    console.log("data", data);
+    setFormData(data); // Jotaiのatomに値をセット
+    mutation.mutate(data);
+  };
+
   const onClickAffiliations = async () => {
-    const data = await fetchAffiliations(selectedValue);
+    const affiliationName = watch("affiliation"); // useFormから値を取得
+    const data = await fetchAffiliations(affiliationName || "");
     setAffiliations(data);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    setFormData(data);
-    console.log(data);
-    setStep(1);
-  };
-
-  // ボタンのアクション
-  const onButtonClick = (rowData: Affiliation) => {
-    setSelectedValue(rowData.name);
+  const onClickTableButton = (rowData: Affiliation) => {
+    setValue("affiliation", rowData.name); // useFormの値を更新
     setAffiliations([]);
   };
 
@@ -72,10 +97,11 @@ export default function StepZero({
       <Button
         label="選択"
         type="button"
-        onClick={() => onButtonClick(rowData)}
+        onClick={() => onClickTableButton(rowData)}
       />
     );
   };
+
   return (
     <div style={styles.commonContainer}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -129,35 +155,25 @@ export default function StepZero({
               </div>
             </GridItem>
           </Grid>
-          <Grid>
-            <GridItem $isLabel={true}>
-              <p>住所:</p>
-            </GridItem>
-            <GridItem $isLabel={false}>
-              <InputText type="text" />
-            </GridItem>
-          </Grid>
-          <Grid>
-            <GridItem $isLabel={true}>
-              <p>生年月日:</p>
-            </GridItem>
-            <GridItem $isLabel={false}>
-              <MaskedCalendar id="birthDay" colorChangeDates={[]} />
-            </GridItem>
-          </Grid>
+
           <Grid>
             <GridItem $isLabel={true}>
               <p>所属:</p>
             </GridItem>
             <GridItem $isLabel={false}>
               <div className="p-inputgroup flex-1">
-                <InputText
-                  type="text"
-                  name="grop"
-                  value={selectedValue}
-                  onChange={(e) => {
-                    setSelectedValue(e.target.value);
-                  }}
+                <Controller
+                  name="affiliation"
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      type="text"
+                      onChange={(e) => {
+                        field.onChange(e);
+                      }}
+                    />
+                  )}
                 />
                 <Button
                   type="button"
@@ -167,6 +183,10 @@ export default function StepZero({
               </div>
             </GridItem>
           </Grid>
+
+          <p>ビルドエラー回避のために定義</p>
+          <MaskedCalendar id="test" colorChangeDates={[]} />
+
           <div style={{ padding: 20 }}>
             {affiliations.length > 0 && (
               <div>
