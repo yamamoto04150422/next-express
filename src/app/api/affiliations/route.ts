@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   // ダミーデータを返却
   const affiliations: Affiliation[] = [
-    { id: 1, name: "testing" },
-    { id: 2, name: "playing" },
-    { id: 3, name: "watching" },
+    { id: 1, name: "人事部" },
+    { id: 2, name: "営業部" },
+    { id: 3, name: "経理部" },
   ];
 
   // クエリパラメータを取得
