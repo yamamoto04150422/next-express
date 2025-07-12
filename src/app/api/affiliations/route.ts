@@ -1,6 +1,9 @@
 import { Affiliation } from "@/types/affiliation/Affiliation";
 import { NextResponse } from "next/server";
 
+// APIエンドポイント: /api/affiliations
+// このエンドポイントは、所属情報を取得するためのものです。
+// curl "http://localhost:3000/api/affiliations?name="
 export async function GET(request: Request) {
   // ダミーデータを返却
   const affiliations: Affiliation[] = [
