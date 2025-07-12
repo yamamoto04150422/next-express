@@ -15,19 +15,36 @@ import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
 import { useMutation } from "@tanstack/react-query";
 
+// Types
 export type FormValues = {
   username: string;
   name: string;
   affiliation?: string;
 };
 
+// API Calls
 const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
   const response = await fetch(`/api/affiliations?name=${param}`);
-  if (!response.ok) {
-    throw new Error("データの取得に失敗しました");
-  }
+  if (!response.ok) throw new Error("データの取得に失敗しました");
   return response.json();
 };
+
+const registerUser = async (data: FormValues) => {
+  const response = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("登録に失敗しました");
+  return response.json();
+};
+
+// Validation Schema
+const schema = yup.object().shape({
+  username: requiredString("ユーザ名"),
+  name: requiredString("名称"),
+  affiliation: yup.string().optional(),
+});
 
 export default function StepZero({
   setStep,
@@ -38,37 +55,10 @@ export default function StepZero({
 
   const [formData, setFormData] = useAtom(formDataRegisterAtom);
 
-  // バリデーションスキーマ
-  const schema = yup.object().shape({
-    username: requiredString("ユーザ名"),
-    name: requiredString("名称"),
-    affiliation: yup.string().optional(),
-  });
-
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: { username: "", name: "", affiliation: "" },
     resolver: yupResolver(schema), // yupを適用
   });
-
-  const onClickAffiliations = async () => {
-    const affiliationName = watch("affiliation"); // useFormから値を取得
-    const data = await fetchAffiliations(affiliationName || "");
-    setAffiliations(data);
-  };
-
-  const registerUser = async (data: FormValues) => {
-    const response = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("登録に失敗しました");
-    }
-
-    return response.json(); // 必要ならレスポンスを利用
-  };
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -88,8 +78,13 @@ export default function StepZero({
     mutation.mutate(data);
   };
 
-  // ボタンのアクション
-  const onButtonClick = (rowData: Affiliation) => {
+  const onClickAffiliations = async () => {
+    const affiliationName = watch("affiliation"); // useFormから値を取得
+    const data = await fetchAffiliations(affiliationName || "");
+    setAffiliations(data);
+  };
+
+  const onClickTableButton = (rowData: Affiliation) => {
     setValue("affiliation", rowData.name); // useFormの値を更新
     setAffiliations([]);
   };
@@ -100,7 +95,7 @@ export default function StepZero({
       <Button
         label="選択"
         type="button"
-        onClick={() => onButtonClick(rowData)}
+        onClick={() => onClickTableButton(rowData)}
       />
     );
   };
