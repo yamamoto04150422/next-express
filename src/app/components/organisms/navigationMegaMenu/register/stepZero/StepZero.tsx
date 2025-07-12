@@ -134,15 +134,6 @@ export default function StepZero({
 
           <Grid>
             <GridItem $isLabel={true}>
-              <p>生年月日:</p>
-            </GridItem>
-            <GridItem $isLabel={false}>
-              <MaskedCalendar id="birthDay" colorChangeDates={[]} />
-            </GridItem>
-          </Grid>
-
-          <Grid>
-            <GridItem $isLabel={true}>
               <p>所属:</p>
             </GridItem>
             <GridItem $isLabel={false}>
