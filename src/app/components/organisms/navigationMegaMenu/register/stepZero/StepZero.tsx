@@ -17,7 +17,7 @@ import { requiredString } from "@/app/utils/validation/common/commonSchema";
 export type FormValues = {
   username: string;
   name: string;
-  affiliation: string;
+  affiliation?: string;
 };
 
 const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
@@ -41,7 +41,7 @@ export default function StepZero({
   const schema = yup.object().shape({
     username: requiredString("ユーザ名"),
     name: requiredString("名称"),
-    affiliation: requiredString("所属"),
+    affiliation: yup.string().optional(),
   });
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
