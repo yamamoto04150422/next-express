@@ -55,6 +55,8 @@ export default function StepZero({
 
   const [formData, setFormData] = useAtom(formDataRegisterAtom);
 
+  console.log("jotai,formData", formData); // Jotaiのatomの値を確認
+
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: { username: "", name: "", affiliation: "" },
     resolver: yupResolver(schema), // yupを適用
@@ -181,6 +183,9 @@ export default function StepZero({
               </div>
             </GridItem>
           </Grid>
+
+          <p>ビルドエラー回避のために定義</p>
+          <MaskedCalendar id="test" colorChangeDates={[]} />
 
           <div style={{ padding: 20 }}>
             {affiliations.length > 0 && (
