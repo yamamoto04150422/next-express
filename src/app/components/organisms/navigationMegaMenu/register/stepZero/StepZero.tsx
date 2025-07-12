@@ -51,7 +51,7 @@ export default function StepZero({
 
   const onClickAffiliations = async () => {
     const affiliationName = watch("affiliation"); // useFormから値を取得
-    const data = await fetchAffiliations(affiliationName);
+    const data = await fetchAffiliations(affiliationName || "");
     setAffiliations(data);
   };
 
