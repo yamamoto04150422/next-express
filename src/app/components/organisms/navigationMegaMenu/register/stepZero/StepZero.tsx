@@ -19,8 +19,8 @@ export type FormValues = {
   name: string;
 };
 
-const fetchAffiliations = async (): Promise<Affiliation[]> => {
-  const response = await fetch("/api/affiliations");
+const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
+  const response = await fetch(`/api/affiliations?name=${param}`);
   if (!response.ok) {
     throw new Error("データの取得に失敗しました");
   }
@@ -50,7 +50,7 @@ export default function StepZero({
   });
 
   const onClickAffiliations = async () => {
-    const data = await fetchAffiliations();
+    const data = await fetchAffiliations(selectedValue);
     setAffiliations(data);
   };
 
@@ -151,7 +151,14 @@ export default function StepZero({
             </GridItem>
             <GridItem $isLabel={false}>
               <div className="p-inputgroup flex-1">
-                <InputText type="text" name="grop" value={selectedValue} />
+                <InputText
+                  type="text"
+                  name="grop"
+                  value={selectedValue}
+                  onChange={(e) => {
+                    setSelectedValue(e.target.value);
+                  }}
+                />
                 <Button
                   type="button"
                   icon="pi pi-search"

@@ -1,13 +1,25 @@
 import { Affiliation } from "@/types/affiliation/Affiliation";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   // ダミーデータを返却
   const affiliations: Affiliation[] = [
-    { id: 1, name: "営業部" },
-    { id: 2, name: "技術部" },
-    { id: 3, name: "人事部" },
+    { id: 1, name: "testing" },
+    { id: 2, name: "playing" },
+    { id: 3, name: "watching" },
   ];
 
-  return NextResponse.json(affiliations);
+  // クエリパラメータを取得
+  const url = new URL(request.url);
+  const searchName = url.searchParams.get("name");
+
+  // 検索条件に一致するデータをフィルタリング
+  const filteredAffiliations = searchName
+    ? affiliations.filter((affiliation) =>
+        affiliation.name.includes(searchName)
+      )
+    : affiliations;
+
+  // 一致するデータを返却
+  return NextResponse.json(filteredAffiliations);
 }
