@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
+import { useMutation } from "@tanstack/react-query";
 
 export type FormValues = {
   username: string;
@@ -55,10 +56,36 @@ export default function StepZero({
     setAffiliations(data);
   };
 
+  const registerUser = async (data: FormValues) => {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("登録に失敗しました");
+    }
+
+    return response.json(); // 必要ならレスポンスを利用
+  };
+
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      // 成功時の処理（画面遷移など）
+      console.log("登録成功", data);
+      setStep(1);
+    },
+    onError: (error) => {
+      console.error("登録エラー", error);
+    },
+  });
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    setFormData(data);
-    console.log(data);
-    setStep(1);
+    console.log("data", data);
+    setFormData(data); // Jotaiのatomに値をセット
+    mutation.mutate(data);
   };
 
   // ボタンのアクション
