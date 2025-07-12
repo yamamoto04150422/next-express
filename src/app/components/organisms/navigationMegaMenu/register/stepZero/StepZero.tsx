@@ -17,6 +17,7 @@ import { requiredString } from "@/app/utils/validation/common/commonSchema";
 export type FormValues = {
   username: string;
   name: string;
+  affiliation: string;
 };
 
 const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
@@ -34,23 +35,23 @@ export default function StepZero({
 }) {
   const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
 
-  const [selectedValue, setSelectedValue] = useState("");
-
   const [formData, setFormData] = useAtom(formDataRegisterAtom);
 
   // バリデーションスキーマ
   const schema = yup.object().shape({
     username: requiredString("ユーザ名"),
     name: requiredString("名称"),
+    affiliation: requiredString("所属"),
   });
 
-  const { control, handleSubmit } = useForm<FormValues>({
-    defaultValues: formData,
+  const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
+    defaultValues: { username: "", name: "", affiliation: "" },
     resolver: yupResolver(schema), // yupを適用
   });
 
   const onClickAffiliations = async () => {
-    const data = await fetchAffiliations(selectedValue);
+    const affiliationName = watch("affiliation"); // useFormから値を取得
+    const data = await fetchAffiliations(affiliationName);
     setAffiliations(data);
   };
 
@@ -62,7 +63,7 @@ export default function StepZero({
 
   // ボタンのアクション
   const onButtonClick = (rowData: Affiliation) => {
-    setSelectedValue(rowData.name);
+    setValue("affiliation", rowData.name); // useFormの値を更新
     setAffiliations([]);
   };
 
@@ -76,6 +77,7 @@ export default function StepZero({
       />
     );
   };
+
   return (
     <div style={styles.commonContainer}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -145,19 +147,25 @@ export default function StepZero({
               <MaskedCalendar id="birthDay" colorChangeDates={[]} />
             </GridItem>
           </Grid>
+
           <Grid>
             <GridItem $isLabel={true}>
               <p>所属:</p>
             </GridItem>
             <GridItem $isLabel={false}>
               <div className="p-inputgroup flex-1">
-                <InputText
-                  type="text"
-                  name="grop"
-                  value={selectedValue}
-                  onChange={(e) => {
-                    setSelectedValue(e.target.value);
-                  }}
+                <Controller
+                  name="affiliation"
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      type="text"
+                      onChange={(e) => {
+                        field.onChange(e);
+                      }}
+                    />
+                  )}
                 />
                 <Button
                   type="button"
