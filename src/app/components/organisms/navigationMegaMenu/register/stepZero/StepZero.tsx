@@ -131,14 +131,7 @@ export default function StepZero({
               </div>
             </GridItem>
           </Grid>
-          <Grid>
-            <GridItem $isLabel={true}>
-              <p>住所:</p>
-            </GridItem>
-            <GridItem $isLabel={false}>
-              <InputText type="text" />
-            </GridItem>
-          </Grid>
+
           <Grid>
             <GridItem $isLabel={true}>
               <p>生年月日:</p>
@@ -175,6 +168,7 @@ export default function StepZero({
               </div>
             </GridItem>
           </Grid>
+
           <div style={{ padding: 20 }}>
             {affiliations.length > 0 && (
               <div>
