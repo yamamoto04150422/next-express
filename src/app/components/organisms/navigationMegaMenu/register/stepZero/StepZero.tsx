@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
@@ -78,11 +78,11 @@ export default function StepZero({
     resolver: yupResolver(schema), // yupを適用
   });
 
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeywordRef = useRef("");
 
   const { data, refetch, isFetching } = useQuery({
-    queryKey: ["affiliations", searchKeyword],
-    queryFn: () => fetchAffiliations(searchKeyword),
+    queryKey: ["affiliations", searchKeywordRef.current],
+    queryFn: () => fetchAffiliations(searchKeywordRef.current),
     retry: false, // エラー時に再試行しない
     enabled: false, // 初回は自動でフェッチしない
     refetchOnWindowFocus: false, // ウィンドウフォーカス時に再フェッチしない
@@ -116,7 +116,7 @@ export default function StepZero({
   };
 
   const onClickAffiliations = () => {
-    setSearchKeyword(watch("affiliation") ?? "");
+    searchKeywordRef.current = watch("affiliation") ?? "";
     refetch();
   };
 
