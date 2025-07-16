@@ -14,11 +14,13 @@ import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
 import { useMutation } from "@tanstack/react-query";
+import { Checkbox } from "primereact/checkbox";
 
 // Types
 export type FormValues = {
   username: string;
   name: string;
+  agree: boolean;
   affiliation?: string;
 };
 
@@ -43,6 +45,10 @@ const registerUser = async (data: FormValues) => {
 const schema = yup.object().shape({
   username: requiredString("ユーザ名"),
   name: requiredString("名称"),
+  agree: yup
+    .boolean()
+    .oneOf([true], "利用規約に同意する必要があります")
+    .required(),
   affiliation: yup.string().optional(),
 });
 
@@ -58,7 +64,7 @@ export default function StepZero({
   console.log("jotai,formData", formData); // Jotaiのatomの値を確認
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
-    defaultValues: { username: "", name: "", affiliation: "" },
+    defaultValues: { username: "", name: "", agree: false, affiliation: "" },
     resolver: yupResolver(schema), // yupを適用
   });
 
@@ -148,6 +154,36 @@ export default function StepZero({
                   render={({ field, fieldState: { error } }) => (
                     <>
                       <InputText {...field} />
+                      {error && <p style={{ color: "red" }}>{error.message}</p>}
+                    </>
+                  )}
+                />
+              </div>
+            </GridItem>
+          </Grid>
+
+          <Grid>
+            <GridItem $isLabel={true}>
+              <p>利用規約:</p>
+            </GridItem>
+            <GridItem $isLabel={false}>
+              <div className="w-full">
+                <Controller
+                  name="agree"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <>
+                      <div style={{ display: "flex", textAlign: "center" }}>
+                        <Checkbox
+                          {...field}
+                          inputId="agree"
+                          checked={field.value ?? false}
+                          onChange={(e) => field.onChange(e.checked)}
+                        />
+                        <label htmlFor="agree" className="ml-2">
+                          利用規約に同意する
+                        </label>
+                      </div>
                       {error && <p style={{ color: "red" }}>{error.message}</p>}
                     </>
                   )}
