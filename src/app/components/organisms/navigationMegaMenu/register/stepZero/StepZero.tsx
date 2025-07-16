@@ -9,11 +9,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Checkbox } from "primereact/checkbox";
 
 // Types
@@ -63,8 +63,6 @@ export default function StepZero({
 }: {
   setStep: (step: number) => void;
 }) {
-  const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
-
   const [formData, setFormData] = useAtom(formDataRegisterAtom);
 
   console.log("jotai,formData", formData); // Jotaiのatomの値を確認
@@ -79,6 +77,20 @@ export default function StepZero({
     },
     resolver: yupResolver(schema), // yupを適用
   });
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const { data, refetch, isFetching } = useQuery({
+    queryKey: ["affiliations", searchKeyword],
+    queryFn: () => fetchAffiliations(searchKeyword),
+    retry: false, // エラー時に再試行しない
+    enabled: false, // 初回は自動でフェッチしない
+    refetchOnWindowFocus: false, // ウィンドウフォーカス時に再フェッチしない
+  });
+
+  const [affiliationsData, setAffiliationsData] = useState<Affiliation[]>(
+    data || []
+  );
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -98,15 +110,14 @@ export default function StepZero({
     mutation.mutate(data);
   };
 
-  const onClickAffiliations = async () => {
-    const affiliationName = watch("affiliation"); // useFormから値を取得
-    const data = await fetchAffiliations(affiliationName || "");
-    setAffiliations(data);
-  };
-
   const onClickTableButton = (rowData: Affiliation) => {
     setValue("affiliation", rowData.name); // useFormの値を更新
-    setAffiliations([]);
+    setAffiliationsData([]);
+  };
+
+  const onClickAffiliations = () => {
+    setSearchKeyword(watch("affiliation") ?? "");
+    refetch();
   };
 
   // アクションボタンのテンプレート
@@ -119,6 +130,13 @@ export default function StepZero({
       />
     );
   };
+
+  useEffect(() => {
+    // dataが更新されたときにaffiliationsを更新
+    if (data) {
+      setAffiliationsData(data);
+    }
+  }, [data]);
 
   return (
     <div style={styles.commonContainer}>
@@ -278,6 +296,7 @@ export default function StepZero({
                   type="button"
                   icon="pi pi-search"
                   onClick={onClickAffiliations}
+                  disabled={isFetching}
                 />
               </div>
             </GridItem>
@@ -287,9 +306,9 @@ export default function StepZero({
           <MaskedCalendar id="test" colorChangeDates={[]} />
 
           <div style={{ padding: 20 }}>
-            {affiliations.length > 0 && (
+            {affiliationsData.length > 0 && (
               <div>
-                <DataTable value={affiliations} rowHover showGridlines>
+                <DataTable value={affiliationsData} rowHover showGridlines>
                   <Column field="id" header="ID" />
                   <Column field="name" header="名称" />
                   <Column
