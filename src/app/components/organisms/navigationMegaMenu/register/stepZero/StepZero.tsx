@@ -34,6 +34,7 @@ const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
     });
     return response.data;
   } catch (error) {
+    console.error("登録エラー", error);
     throw new Error("データの取得に失敗しました");
   }
 };
@@ -43,6 +44,7 @@ const registerUser = async (data: FormValues) => {
     const response = await api.post("/api/register", data);
     return response.data;
   } catch (error) {
+    console.error("登録エラー", error);
     throw new Error("登録に失敗しました");
   }
 };
