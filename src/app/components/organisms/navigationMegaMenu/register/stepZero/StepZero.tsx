@@ -39,13 +39,12 @@ const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
 };
 
 const registerUser = async (data: FormValues) => {
-  const response = await fetch("/api/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error("登録に失敗しました");
-  return response.json();
+  try {
+    const response = await api.post("/api/register", data);
+    return response.data;
+  } catch (error) {
+    throw new Error("登録に失敗しました");
+  }
 };
 
 // Validation Schema
