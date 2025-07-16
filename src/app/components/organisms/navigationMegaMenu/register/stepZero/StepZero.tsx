@@ -21,6 +21,7 @@ export type FormValues = {
   username: string;
   name: string;
   agree: boolean;
+  agreeOptions: string[];
   affiliation?: string;
 };
 
@@ -49,6 +50,11 @@ const schema = yup.object().shape({
     .boolean()
     .oneOf([true], "利用規約に同意する必要があります")
     .required(),
+  agreeOptions: yup
+    .array()
+    .of(yup.string().required())
+    .min(1, "1つ以上選択してください")
+    .required("必須です"),
   affiliation: yup.string().optional(),
 });
 
@@ -64,7 +70,13 @@ export default function StepZero({
   console.log("jotai,formData", formData); // Jotaiのatomの値を確認
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
-    defaultValues: { username: "", name: "", agree: false, affiliation: "" },
+    defaultValues: {
+      username: "",
+      name: "",
+      agree: false,
+      agreeOptions: [],
+      affiliation: "",
+    },
     resolver: yupResolver(schema), // yupを適用
   });
 
@@ -189,6 +201,57 @@ export default function StepZero({
                   )}
                 />
               </div>
+            </GridItem>
+          </Grid>
+
+          <Grid>
+            <GridItem $isLabel={true}>
+              <p>オプション:</p>
+            </GridItem>
+            <GridItem $isLabel={false} $column="5 / 25">
+              <Controller
+                name="agreeOptions"
+                control={control}
+                render={({ field, fieldState: { error } }) => {
+                  const options = [
+                    { label: "Aを受け取る", value: "optionA" },
+                    { label: "Bに参加する", value: "optionB" },
+                    { label: "Cを希望する", value: "optionC" },
+                  ];
+
+                  const handleChange = (
+                    checked: boolean | undefined,
+                    value: string
+                  ) => {
+                    const currentValues = field.value ?? []; // ← ここで undefined 回避
+                    const newValue = checked
+                      ? [...currentValues, value]
+                      : currentValues.filter((v) => v !== value);
+                    field.onChange(newValue);
+                  };
+
+                  return (
+                    <div className="flex flex-col gap-2">
+                      {options.map((option) => (
+                        <div key={option.value} className="flex items-center">
+                          <Checkbox
+                            inputId={option.value}
+                            value={option.value}
+                            checked={field.value?.includes(option.value)}
+                            onChange={(e) =>
+                              handleChange(e.checked, option.value)
+                            }
+                          />
+                          <label htmlFor={option.value} className="ml-2">
+                            {option.label}
+                          </label>
+                        </div>
+                      ))}
+                      {error && <p style={{ color: "red" }}>{error.message}</p>}
+                    </div>
+                  );
+                }}
+              />
             </GridItem>
           </Grid>
 
