@@ -6,6 +6,19 @@ export const api = axios.create({
   withCredentials: true, // クッキーを送信する場合はtrueに設定
 });
 
+api.interceptors.request.use(
+  (config) => {
+    console.log(
+      `[APIリクエスト] ${config.method?.toUpperCase()} ${config.url}`
+    );
+    return config;
+  },
+  (error) => {
+    console.error("[リクエストエラー]", error);
+    return Promise.reject(error);
+  }
+);
+
 api.interceptors.response.use(
   (response) => {
     console.log(
