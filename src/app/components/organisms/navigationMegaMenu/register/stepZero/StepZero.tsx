@@ -15,6 +15,7 @@ import { formDataRegisterAtom } from "@/app/atoms/formDataAtom";
 import { requiredString } from "@/app/utils/validation/common/commonSchema";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Checkbox } from "primereact/checkbox";
+import { api } from "../../../../../../../lib/axios";
 
 // Types
 export type FormValues = {
@@ -27,9 +28,14 @@ export type FormValues = {
 
 // API Calls
 const fetchAffiliations = async (param: string): Promise<Affiliation[]> => {
-  const response = await fetch(`/api/affiliations?name=${param}`);
-  if (!response.ok) throw new Error("データの取得に失敗しました");
-  return response.json();
+  try {
+    const response = await api.get<Affiliation[]>("/api/affiliations", {
+      params: { name: param },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("データの取得に失敗しました");
+  }
 };
 
 const registerUser = async (data: FormValues) => {
