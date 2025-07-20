@@ -2,6 +2,7 @@ import { SiteStats } from "@/types/siteStats/SiteStats";
 import { NextResponse } from "next/server";
 
 const statsData: SiteStats = {
+  detailId: "A0001",
   totalUsers: 1200,
   totalArticles: 350,
   dailyActiveUsers: 89,

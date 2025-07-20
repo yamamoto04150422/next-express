@@ -84,6 +84,9 @@ export default function Home() {
 
             <h4>日次アクティブユーザー数</h4>
             <p>{stats.dailyActiveUsers}</p>
+            <Link href={`/stats/${stats.detailId}`}>
+              <Button label="詳細を見る" className="p-button-secondary" />
+            </Link>
           </Card>
         </div>
       ) : (
