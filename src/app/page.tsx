@@ -26,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("/api/stats", { cache: "force-cache" });
+        const res = await fetch("/api/stats");
         if (res.ok) {
           const data: SiteStats = await res.json();
           setStats(data);
@@ -84,6 +84,9 @@ export default function Home() {
 
             <h4>日次アクティブユーザー数</h4>
             <p>{stats.dailyActiveUsers}</p>
+            <Link href={`/stats/${stats.detailId}`}>
+              <Button label="詳細を見る" className="p-button-secondary" />
+            </Link>
           </Card>
         </div>
       ) : (
