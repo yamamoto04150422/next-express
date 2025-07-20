@@ -26,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("/api/stats", { cache: "force-cache" });
+        const res = await fetch("/api/stats");
         if (res.ok) {
           const data: SiteStats = await res.json();
           setStats(data);
