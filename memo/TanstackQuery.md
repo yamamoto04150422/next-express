@@ -1,6 +1,18 @@
+# HTTPメソッドごとのパラメータの渡し方
+
+| メソッド   | パラメータの渡し方 | 主な用途                 | 備考                           |
+| ---------- | ------------------ | ------------------------ | ------------------------------ |
+| **GET**    | クエリ or パス     | 検索、一覧取得、詳細取得 | **データはURLに含める**        |
+| **POST**   | ボディ             | 登録（新規作成）         | クエリも併用可だが基本はボディ |
+| **PUT**    | ボディ             | 更新（全体）             | IDはURL（パス）に含める        |
+| **PATCH**  | ボディ             | 更新（一部）             | 同上                           |
+| **DELETE** | パス or クエリ     | 削除                     | IDはパス or クエリ             |
+
+# tanstackqueryの流れ
+
 Tanstack Query（旧 React Query）をNext.js（App Router）で導入する手順を以下に説明します。
 
-### 1. パッケージのインストール
+## 1. パッケージのインストール
 
 まず、Tanstack Queryのパッケージをプロジェクトにインストールします。
 
@@ -17,7 +29,7 @@ npm install axios
 npm install @tanstack/react-query-devtools
 ```
 
-### 2. `QueryClient`のセットアップ
+## 2. `QueryClient`のセットアップ
 
 Tanstack Queryでは、`QueryClient`を使ってデータフェッチの設定やキャッシュを管理します。
 
@@ -39,11 +51,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-### 3. データのフェッチ処理
+## 3. データのフェッチ処理
 
 各コンポーネントで `useQuery` フックを使ってデータを取得します。
 
-#### 例: APIからデータを取得するコンポーネント
+### 例: APIからデータを取得するコンポーネント
 
 ```tsx
 // app/page.tsx
@@ -119,7 +131,7 @@ export default function PostFetcher() {
 }
 ```
 
-### 4. Devtoolsの追加（任意）
+## 4. Devtoolsの追加（任意）
 
 開発環境では、Query Devtoolsを使うことでキャッシュの状態を視覚的に確認できます。
 
@@ -140,7 +152,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-### 5. 自動リフェッチやキャッシュの設定（任意）
+## 5. 自動リフェッチやキャッシュの設定（任意）
 
 `useQuery`のオプションで、自動リフェッチやキャッシュの保持期間などを設定できます。
 
@@ -151,26 +163,26 @@ const { data, error, isLoading } = useQuery(["posts"], fetchData, {
 });
 ```
 
-### まとめ
+## まとめ
 
 1. `@tanstack/react-query` をインストール。
 2. `QueryClientProvider` でラップしてクライアントを共有。
 3. `useQuery` フックでデータフェッチを簡単に実装。
 4. Devtoolsを使ってデバッグが可能。
 
+# Tanstack QueryとApp Routerの関係について
+
 この流れでTanstack Queryを導入でき、Next.jsのApp Routerと相性よく動作します。
 
 結論として、**SSG（Static Site Generation）や ISR（Incremental Static Regeneration）** を考慮しても、**TanStack Query（React Query）は導入しても問題ありません**。
 
-### その理由：
+## 療法利用して良い理由：
 
 1. **SSG/ISRとTanStack Queryの使い分け**:
-
    - **SSGやISR** で取得したデータは、最初にビルド時または再生成時にサーバーサイドで取得され、ページが静的に生成されます。このデータはサーバーサイドで一度取得され、クライアントに配信されるため、ユーザーは高速にページを表示できます。
    - 一方、**TanStack Query** は、クライアントサイドでデータを取得し、キャッシュや再フェッチなどを管理するライブラリです。**SSGやISRで取得したデータを最初に表示する**ことができますが、その後、**クライアントサイドで動的にデータを再取得したり、更新したりする**必要がある場合に有効です。
 
 2. **クライアントサイドのデータ更新とキャッシュ管理**:
-
    - **TanStack Query** は、クライアントサイドでデータのキャッシュや更新を効率的に管理できます。ページの初回ロード時に**SSGやISRで取得したデータ**を表示し、その後、ユーザーがインタラクションを行うたびにデータをリアルタイムで取得して更新することができます。
    - また、**staleTime**や**refetchOnWindowFocus**などのオプションを使って、**再フェッチのタイミングを制御**できるため、ユーザー体験を最適化できます。
 
@@ -178,7 +190,7 @@ const { data, error, isLoading } = useQuery(["posts"], fetchData, {
    - **SSG/ISR** はページが静的に生成されるため、初回表示時にサーバーサイドでデータを取得し、その後**クライアントサイドでTanStack Queryを使って更新**するという流れは問題ありません。
    - TanStack Queryは、クライアントサイドの状態管理に特化しており、サーバーサイドで取得したデータをそのままクライアントサイドでキャッシュし、管理できるので、**両者の役割を補完する形**で使用できます。
 
-### まとめ
+## まとめ
 
 - **SSGやISRを使用して静的にデータを生成し、初期データとして利用**し、その後の**動的なデータの取得やキャッシュ管理**を**TanStack Query**に任せるのは、非常に効果的なアーキテクチャです。
 - **SSGやISR** でのデータ取得は初期ロード時のみであり、その後のクライアントサイドでのデータ更新や再フェッチには **TanStack Query** が最適です。
