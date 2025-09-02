@@ -35,3 +35,15 @@ git checkout featureA
 git pull origin featureA
 git merge develop     # または git rebase develop
 ```
+
+## 注釈付きタグを作成する
+
+```
+git tag -a v1.0.0 -m "First release"
+```
+
+## タグ付きでプッシュ
+
+```
+git push --set-upstream origin xxx v1.0.0
+```
