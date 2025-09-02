@@ -17,3 +17,9 @@
 | **静的サイト出力**   | SSG / ISR（Incremental Static Regeneration）             | ビルド時 or リクエスト時に静的生成           |
 | **実行環境**         | Edge Runtime / Node Runtime                              | どちらかを選べる（middlewareやAPIで）        |
 | **内部キャッシュ**   | Turbopack開発中、現状は `swc`/`webpack` でキャッシュ活用 | 同じコードの再ビルドを高速化                 |
+
+# Next Auth
+
+npm install next-auth @types/next-auth
+
+[公式ドキュメント](https://next-auth.js.org/getting-started/client)
