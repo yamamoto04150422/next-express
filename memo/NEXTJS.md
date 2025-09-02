@@ -23,3 +23,173 @@
 npm install next-auth @types/next-auth
 
 [公式ドキュメント](https://next-auth.js.org/getting-started/client)
+
+# キャッシュ戦略
+
+以下に、各レンダリング方式とキャッシュ戦略を紐づけた詳細を記載します。
+
+---
+
+### **1. CSR (Client-Side Rendering)**
+
+**用途:**
+
+- ユーザーインタラクションの多い動的なページ（リアルタイムで状態が変化するもの）。  
+  例: チャットアプリ、ストリーミングサービスなど、即時データ更新が必要な場合。
+
+**判定:**
+
+- `"use client"` を指定する。
+  - App Routerのページやコンポーネントで、クライアントサイドレンダリングを明示的に設定。
+
+**キャッシュ戦略:**
+
+- **Request Memoization:**
+  - クライアントサイドで同じリクエストが複数回行われる場合のパフォーマンス最適化に考慮。
+  - 利用例: React Query, SWR などを使用。
+
+```tsx
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function ChatApp() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const response = await fetch("/api/messages");
+      const data = await response.json();
+      setMessages(data);
+    };
+    fetchMessages();
+  }, []);
+
+  return (
+    <ul>
+      {messages.map((msg, index) => (
+        <li key={index}>{msg.text}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+### **2. SSR (Server-Side Rendering)**
+
+**用途:**
+
+- データが頻繁に更新されるページで、ユーザーのリクエストごとに最新の情報を取得する必要がある場合。  
+  例: ダッシュボード、ログインしたユーザー向けのパーソナライズされたページ。
+
+**判定:**
+
+- デフォルトでサーバーサイドレンダリング (SSR) になる。`dynamic = "force-dynamic"` を指定することで動的レンダリングを強制。
+
+**キャッシュ戦略:**
+
+- **Opt out:**
+  - フルキャッシュを無効化して、リクエストごとに最新データを取得。
+  - `fetch()` に `cache: "no-store"` を設定する。
+
+```tsx
+export default async function Dashboard() {
+  const response = await fetch("https://example.com/api/data", {
+    cache: "no-store", // キャッシュ無効化
+  });
+  const data = await response.json();
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>{data.message}</p>
+    </div>
+  );
+}
+```
+
+---
+
+### **3. SSG (Static Site Generation)**
+
+**用途:**
+
+- 更新頻度が低く、静的なコンテンツで問題ない場合。  
+  例: プライバシーポリシー、会社概要ページ、ブログ記事。
+
+**判定:**
+
+- `dynamic = "force-static"` または、デフォルトで静的レンダリングになる。
+
+**キャッシュ戦略:**
+
+- **Full Route Cache:**
+  - フルルートキャッシュが有効で、静的に生成されたHTMLが利用される。
+  - 初回リクエスト後、再生成されるまでキャッシュが維持。
+
+```tsx
+export default function About() {
+  return (
+    <div>
+      <h1>About Us</h1>
+      <p>This is a static page generated at build time.</p>
+    </div>
+  );
+}
+```
+
+---
+
+### **4. ISR (Incremental Static Regeneration)**
+
+**用途:**
+
+- 静的コンテンツに近いが、ある程度の更新頻度が必要な場合。  
+  例: ニュース記事、商品リスト。
+
+**判定:**
+
+- `export const revalidate = n;` を設定し、`n` 秒ごとに再生成を実行。
+
+**キャッシュ戦略:**
+
+- **Data Cache:**
+  - データフェッチ時に `next: { revalidate: n }` を利用。
+  - 静的コンテンツとしてキャッシュされ、`n` 秒経過後に新しいデータが取得可能。
+
+```tsx
+export const revalidate = 10; // 10秒ごとに再生成
+
+export default async function News() {
+  const response = await fetch("https://example.com/api/news", {
+    next: { revalidate: 10 },
+  });
+  const news = await response.json();
+
+  return (
+    <div>
+      <h1>Latest News</h1>
+      <ul>
+        {news.map((item) => (
+          <li key={item.id}>{item.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+---
+
+### **キャッシュ戦略まとめ**
+
+| **方式** | **用途**                         | **キャッシュ戦略**            | **Next.js判定**                |
+| -------- | -------------------------------- | ----------------------------- | ------------------------------ |
+| CSR      | ユーザー操作が頻繁な動的ページ   | Request Memoization           | `"use client"` を設定          |
+| SSR      | 最新データを常に必要とするページ | Opt out (`cache: "no-store"`) | デフォルトでサーバーサイド実行 |
+| SSG      | 更新頻度が極めて低い静的ページ   | Full Route Cache              | デフォルトで静的生成           |
+| ISR      | 時々更新が必要な静的ページ       | Data Cache (`revalidate`)     | `revalidate` を指定            |
+
+この構成により、それぞれのレンダリング方式とキャッシュ管理の適切な選択が可能になります

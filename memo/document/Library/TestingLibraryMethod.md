@@ -161,3 +161,9 @@ await userEvent.type(input, "hello");
 | **Branches**   | `if` や `switch` などの**分岐処理**のすべてのパス（条件が true / false など）をカバーしている割合。            |
 | **Functions**  | 関数やメソッドが**呼び出されたかどうか**。未使用関数なども含まれます。                                         |
 | **Lines**      | ソースコードの**行単位**で、どの行が実行されたかを示します。Statementsとほぼ同じに見えるが、違いがあります。   |
+
+## 追記
+
+まだ存在しないものの最終的に存在する要素については、getByやqueryByではなくfindByを使用してください。存在しない要素をアサーションしたい場合にはqueryByを使います。その他のケースでは通常はgetByを使う
+
+React Testing Libraryを使う時は、可能な限りfireEventよりもuserEventを使うように心がけてください。
