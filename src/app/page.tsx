@@ -105,6 +105,13 @@ export default function Home() {
                 onClick={outputCsv}
               />
             </div>
+            <div>
+              <Button
+                label="CSVアップロード画面へ"
+                className="p-button-secondary"
+                onClick={() => router.push("/detail")}
+              />
+            </div>
           </Card>
         </div>
       ) : (
