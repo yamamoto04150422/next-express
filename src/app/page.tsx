@@ -40,6 +40,18 @@ export default function Home() {
     fetchStats();
   }, []);
 
+  const outputCsv = async () => {
+    const res = await fetch("/api/export/csv");
+    const blob = await res.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mock.csv"; // ダウンロードファイル名を統一
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-3">
       <h1 className="text-center mb-4">Next.js OAuth Example</h1>
@@ -81,12 +93,18 @@ export default function Home() {
             <p>{stats.totalUsers}</p>
             <h4>記事数</h4>
             <p>{stats.totalArticles}</p>
-
             <h4>日次アクティブユーザー数</h4>
             <p>{stats.dailyActiveUsers}</p>
-            <Link href={`/stats/${stats.detailId}`}>
-              <Button label="詳細を見る" className="p-button-secondary" />
-            </Link>
+            <div>
+              <Link href={`/stats/${stats.detailId}`}>
+                <Button label="詳細を見る" className="p-button-secondary" />
+              </Link>
+              <Button
+                label="CSV出力"
+                className="p-button-secondary"
+                onClick={outputCsv}
+              />
+            </div>
           </Card>
         </div>
       ) : (
