@@ -1,5 +1,3 @@
----
-
 # Jest/React Testing Library の基本的なテストの書き方
 
 ## 1. テストの全体構造
@@ -7,6 +5,7 @@
 Jest のテストは次のような構造で記述します：
 
 ### テンプレート
+
 ```tsx
 describe("テスト対象の名前", () => {
   test("テストケースの説明", () => {
@@ -16,8 +15,6 @@ describe("テスト対象の名前", () => {
   });
 });
 ```
-
----
 
 ## 2. 各部分の説明
 
@@ -34,8 +31,6 @@ describe("CustomFieldset", () => {
 });
 ```
 
----
-
 ### ② **テストケース**
 
 `test` またはエイリアスである `it` を使って、個々のテストケースを書きます。  
@@ -49,8 +44,6 @@ test("renders title and children correctly", () => {
 });
 ```
 
----
-
 ### ③ **実行結果の確認**
 
 テストの結果が期待通りであることを **アサーション関数（`expect`）** を使って検証します。
@@ -60,8 +53,6 @@ test("renders title and children correctly", () => {
 ```tsx
 expect(screen.getByText("Fieldset Title")).toBeInTheDocument();
 ```
-
----
 
 ## 3. アサーション関数について
 
@@ -76,25 +67,19 @@ expect(actualValue).toBe(expectedValue);
 - **`actualValue`**：テスト対象の値や要素（例: 関数の戻り値、DOM 要素）。
 - **`toBe(expectedValue)`**：実際の値が期待する値と一致することを確認するマッチャー。
 
----
-
 ### アサーションのフロー
 
 1. **`expect`**
-
    - テスト対象（**実際の値**）を受け取ります。
 
 2. **マッチャー**
    - `toBe` などのメソッドで **期待する条件** を記述します。
-
----
 
 ### よく使うマッチャーの一覧
 
 #### 1. **一般的な値の確認**
 
 - **`toBe`**
-
   - 厳密な等価性（`===`）を確認します。
 
   ```tsx
@@ -102,7 +87,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toEqual`**
-
   - オブジェクトや配列の構造が一致することを確認します。
 
   ```tsx
@@ -110,7 +94,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`not`**
-
   - 条件が **成り立たないこと** を確認します。
 
   ```tsx
@@ -120,7 +103,6 @@ expect(actualValue).toBe(expectedValue);
 #### 2. **DOM 要素の確認**
 
 - **`toBeInTheDocument`**
-
   - 要素が DOM に存在することを確認します。
 
   ```tsx
@@ -128,7 +110,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toHaveTextContent`**
-
   - 要素のテキスト内容が一致することを確認します。
 
   ```tsx
@@ -136,7 +117,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toHaveAttribute`**
-
   - 要素が特定の属性を持つことを確認します。
 
   ```tsx
@@ -144,7 +124,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toHaveClass`**
-
   - 要素が特定のクラスを持つことを確認します。
 
   ```tsx
@@ -152,7 +131,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toHaveStyle`**
-
   - 要素が特定のインラインスタイルを持つことを確認します。
 
   ```tsx
@@ -160,7 +138,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toBeDisabled` / `toBeEnabled`**
-
   - 要素が無効化または有効であることを確認します。
 
   ```tsx
@@ -168,7 +145,6 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toBeChecked`**
-
   - チェックボックスやラジオボタンが選択されていることを確認します。
 
   ```tsx
@@ -176,14 +152,11 @@ expect(actualValue).toBe(expectedValue);
   ```
 
 - **`toContainElement`**
-
   - 要素が別の要素を含んでいることを確認します。
 
   ```tsx
   expect(parent).toContainElement(child);
   ```
-
----
 
 ### 使用例
 
@@ -224,16 +197,12 @@ describe("ExampleComponent", () => {
 });
 ```
 
----
-
 ## 4. よく使うメソッド一覧
 
 ### **`screen` のメソッド**
 
 `screen` は DOM にアクセスするためのメソッドを提供します。
 詳しくは [こちら](#よく使うメソッド一覧) を参照してください。
-
----
 
 ## 5. テストの実行方法
 
@@ -248,5 +217,3 @@ npm test
 ```bash
 npm test ExampleComponent.test.tsx
 ```
-
----
