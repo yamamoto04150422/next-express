@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Sample API
+  version: "1.0.0"
+  description: |
+    基本設計用 API仕様書
+    - 認証方式
+    - レスポンス例
+    - エラーコード定義
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /users:
+    get:
+      summary: ユーザー一覧取得
+      description: ユーザー情報を一覧で返却する
+      parameters:
+        - name: limit
+          in: query
+          description: 取得件数
+          required: false
+          schema:
+            type: integer
+            example: 50
+        - name: offset
+          in: query
+          description: 取得開始位置
+          required: false
+          schema:
+            type: integer
+            example: 0
+      responses:
+        "200":
+          description: 正常終了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 123
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: 認証エラー
+        "500":
+          description: サーバーエラー
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "U001"
+        name:
+          type: string
+          example: "山田太郎"
+        email:
+          type: string
+          example: "taro@example.com"
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "E001"
+        message:
+          type: string
+          example: "必須項目 name が未入力です"
+        details:
+          type: array
+          items:
+            type: string
