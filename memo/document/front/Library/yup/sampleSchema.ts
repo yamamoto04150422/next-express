@@ -43,4 +43,3 @@ export const stringRules = {
       excludeEmptyString: true,
     }),
 };
-a;
