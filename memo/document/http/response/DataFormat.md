@@ -1,5 +1,39 @@
 # 構造化データ・フィード技術の経緯まとめ
 
+## 目次
+
+- [🔹 Microformats / Microdata / JSON-LD](#-microformats--microdata--json-ld)
+  - [Microformats (2005頃)](#microformats-2005頃)
+  - [Microdata (HTML5仕様)](#microdata-html5仕様)
+  - [JSON-LD（主流）](#json-ld主流)
+- [🔹 RSS / Atom / JSON Feed](#-rss--atom--json-feed)
+  - [RSS (2000年代前半〜)](#rss-2000年代前半)
+  - [Atom (2003〜)](#atom-2003)
+  - [JSON Feed (2017〜)](#json-feed-2017)
+- [🔹 使用ケースまとめ](#-使用ケースまとめ)
+- [👉 まとめ](#-まとめ)
+- [JSON-LD と JSON Feed の違い](#json-ld-と-json-feed-の違い)
+  - [JSON-LD](#json-ld)
+  - [JSON Feed](#json-feed)
+  - [主な違い](#主な違い)
+  - [まとめ](#まとめ)
+- [Atom vs AtomPub](#atom-vs-atompub)
+  - [✅ テキストまとめ](#-テキストまとめ)
+    - [Atom (Atom Syndication Format)](#atom-atom-syndication-format)
+    - [AtomPub (Atom Publishing Protocol)](#atompub-atom-publishing-protocol)
+  - [✅ 現在の立ち位置](#-現在の立ち位置)
+  - [👉 まとめ](#-まとめ-1)
+  - [✅ 「今からサービスに導入するなら？」](#-今からサービスに導入するなら)
+- [技術の流れ：AtomPubからREST/GraphQLへ](#技術の流れatompubからrestgraphqlへ)
+  - [1. 当時（AtomPubの時代）](#1-当時atompubの時代)
+  - [2. その後（JSON時代へ）](#2-その後json時代へ)
+  - [3. RESTとGraphQLの登場](#3-restとgraphqlの登場)
+    - [REST API](#rest-api)
+    - [GraphQL](#graphql)
+  - [4. まとめると](#4-まとめると)
+  - [技術の流れ](#技術の流れ)
+  - [補足](#補足)
+
 ## 🔹 Microformats / Microdata / JSON-LD
 
 ### Microformats (2005頃)
