@@ -1,10 +1,36 @@
-# playwrightについて
+# Playwrightについて
 
 [npm-trend](https://npmtrends.com/cypress-vs-playwright)
 
-### vscodeの拡張機能
+## 目次
 
-ms-playwright.playwright
+- [VS Code拡張機能](#vs-code拡張機能)
+- [E2Eテストツールの紹介](#e2eテストツールの紹介)
+  - [Playwrightの歴史・変遷](#playwrightの歴史変遷)
+  - [Playwrightの定義・概要](#playwrightの定義概要)
+  - [E2Eテストの比較表](#e2eテストの比較表)
+- [Playwrightの基本カテゴリー](#playwrightの基本カテゴリー)
+  - [ナビゲーション](#ナビゲーション)
+  - [ロケータ](#ロケータ)
+  - [アクション](#アクション)
+  - [マッチャー](#マッチャー)
+- [リトライ挙動](#リトライ挙動)
+- [何をテストとする？](#何をテストとする)
+  - [テストのボリュームのパターン](#テストのボリュームのパターン)
+  - [テスティングトロフィー/アイスクリーム](#テスティングトロフィーアイスクリーム)
+- [準備・片付けコード](#準備片付けコード)
+- [スクショとビデオについて](#スクショとビデオについて)
+- [認証を伴うテスト](#認証を伴うテスト)
+- [テストの7原則](#テストの7原則)
+  - [テストレベル](#テストレベル)
+  - [テストタイプ](#テストタイプ)
+  - [テスト技法](#テスト技法)
+- [テスト自動化の8原則](#テスト自動化の8原則)
+- [参考情報](#その他参考情報)
+
+## VS Code拡張機能
+
+`ms-playwright.playwright`
 
 ## E2Eテストツールの紹介
 
@@ -20,9 +46,9 @@ ms-playwright.playwright
 
 ![E2Eテスト比較表](photo/ComparisonTable.jpeg)
 
-## Playwright/カテゴリー
+## Playwrightの基本カテゴリー
 
-大きく４つに分類できる
+大きく4つに分類できる:
 
 - ナビゲーション
 - ロケータ
@@ -31,7 +57,7 @@ ms-playwright.playwright
 
 ### ナビゲーション
 
-ページ遷移、ページ情報返却
+ページ遷移やページ情報の取得に関する操作
 
 #### `goto()`
 
@@ -60,7 +86,7 @@ await page.waitForURL(/\/detail\/[0-9]+/);
 
 - 注意: URL最終確認はアサーション（下記`toHaveURL`）で締めるとより明確。
 
-#### `toHaveTitle()`と`toHaveURL`
+#### `toHaveTitle()`と`toHaveURL()`
 
 - 概要: 期待値に一致するまで暗黙的に待機しつつ検証する高レベルAPI。
 - 例:
@@ -93,7 +119,7 @@ await expect(page).toHaveURL("https://app.example.com/dashboard");
 1. `page.getByTestId()`
    testId属性から検索
 1. `page.locator()`
-   tag,Id,Cssから検索
+   CSS/タグ/IDから検索
 
 #### 注意
 
@@ -178,7 +204,7 @@ await expect(yamamotoAndActive).toHaveCount(1);
 
 ### アクション
 
-ユーザ情報のシュミレート
+ユーザ操作のシミュレート
 
 #### キーボード操作
 
@@ -216,7 +242,7 @@ await expect(page.getByLabel("都道府県")).toHaveValue("tokyo");
 #### マウス操作
 
 - 概要: ホバー・クリックなどのポインタイベントを再現。
-- 使用する関数: `locator.hover()`, `locator.click()`, `locator.dbClick()`, `locator.dragTo()`
+- 使用する関数: `locator.hover()`, `locator.click()`, `locator.dblclick()`, `locator.dragTo()`
 - 例:
 
 ```ts
@@ -239,7 +265,7 @@ await expect(page.getByPlaceholder("検索")).toBeFocused();
 
 選択された要素の状態が期待と一致しているかテスト
 
-#### `toContainText()`,`toHaveText()`,`toBeVisible()`,`toBeAttached()`
+#### `toContainText()`, `toHaveText()`, `toBeVisible()`, `toBeAttached()`
 
 - 概要: テキストの部分/完全一致、可視性、DOMへの接続状態を検証。
 - 使用する関数: `toContainText()`, `toHaveText()`, `toBeVisible()`, `toBeAttached()`
@@ -272,7 +298,7 @@ await page.getByLabel("利用規約に同意").check();
 await expect(page.getByLabel("利用規約に同意")).toBeChecked();
 ```
 
-#### `toBeDisabled()`,`toBeEnabled()`
+#### `toBeDisabled()`, `toBeEnabled()`
 
 - 概要: 要素の無効/有効状態を検証。
 - 使用する関数: `toBeDisabled()`, `toBeEnabled()`
@@ -283,7 +309,7 @@ await expect(page.getByRole("button", { name: "保存" })).toBeDisabled();
 await expect(page.getByRole("button", { name: "編集" })).toBeEnabled();
 ```
 
-#### `toBeEmpty()`,`toBeHidden()`
+#### `toBeEmpty()`, `toBeHidden()`
 
 - 概要: 要素が空（子要素なし）/非表示であることを検証。
 - 使用する関数: `toBeEmpty()`, `toBeHidden()`
@@ -316,7 +342,7 @@ await expect(page.getByRole("row")).toHaveCount(10);
 await expect(page.getByText(/エラー/)).toHaveCount(1);
 ```
 
-#### `toHaveValue()`,`toHaveValues()`
+#### `toHaveValue()`, `toHaveValues()`
 
 - 概要: 入力値/複数選択値が期待通りであることを検証。
 - 使用する関数: `toHaveValue()`, `toHaveValues()`
@@ -329,9 +355,9 @@ await expect(page.getByLabel("タグ")).toHaveValues(["bug", "feature"]);
 
 ## リトライ挙動
 
-タイムアウトを容易に伸ばすのは`実行結果が伸びる為`辞める
+タイムアウトを安易に伸ばすのは避ける（実行時間が伸びるため）。
 
-また固定時間を待つコードは`フレーキーなテストになるため`辞める
+固定時間を待つコードはフレーキーなテストになるため避ける。
 
 ![Retry](photo/Retry.jpg)
 
@@ -358,7 +384,7 @@ E2Eテストはユニットテストよりもテストケースが大きくな�
 
 ![LayersTesting](photo/LayersTesting.jpg)
 
-#### テスティングトロフフィー
+#### テスティングトロフィー
 
 ![TestingTrophy](photo/TestingTrophy.jpg)
 
@@ -366,7 +392,7 @@ E2Eテストはユニットテストよりもテストケースが大きくな�
 
 ![IceCream](photo/IceCream.jpg)
 
-## 準備片付けコードについて
+## 準備・片付けコード
 
 ```ts
 test.beforeAll();
@@ -390,9 +416,9 @@ test.afterEach();
 1. afterEach
 1. afterAll
 
-# スクショとビデオについて
+## スクショとビデオについて
 
-## スクショ
+### スクショ
 
 - `path`: 保存先ファイル名
 - `fullPage`: true: ページ全体をキャプチャ（falseの場合はビューポートのみ）
@@ -402,14 +428,14 @@ await page.screenshot({ path: 'screenshot.png', fullPage: true });
 
 ```
 
-### 特定の箇所のスクショ
+#### 特定の箇所のスクショ
 
 ```ts
 const element = await page.$("#my-element");
 await element.screenshot({ path: "element.png" });
 ```
 
-## ビデオ録画
+### ビデオ録画
 
 ```ts
 // playwright.config.ts
@@ -424,8 +450,8 @@ export default defineConfig({
   テストごとに録画
 - off
   録画なし
-- relate-on-failure
-  test事に録画、成功したときはすべて削除
+- retain-on-failure
+  テストごとに録画、成功したときはすべて削除
 - on-first-retry
   テストを初めて再試行する場合のみ録画
 
@@ -486,15 +512,26 @@ MSAL.jsを利用する（Microsoft EntraID）
 - ブラックボックステスト
 - ホワイトボックステスト
 
-ISTQBで定義されているのは４つある
+ISTQBで定義されているのは4つある
 
 ### テスト技法
 
-- 同地分割法
+- 同値分割法
 - 境界値分析
 - デシジョンテーブルテスト
 - 状態遷移テスト
 - ユースケーステスト
+
+## テスト自動化の8原則
+
+1. 手動テストはなくならない
+1. 手動でおこなって効果のないテストを自動化しても無駄である
+1. 自動テストは書いたことしかテストしない
+1. テスト自動化の効用はコスト削減だけではない
+1. 自動テストシステムの開発は継続的におこなうものである
+1. 自動化検討はプロジェクト初期から
+1. 自動テストで新種のバグが見つかることは稀である
+1. テスト結果分析という新たなタスクが生まれる
 
 ## その他参考情報
 
