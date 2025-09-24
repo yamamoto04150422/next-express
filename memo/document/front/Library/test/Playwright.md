@@ -26,6 +26,8 @@
   - [テストタイプ](#テストタイプ)
   - [テスト技法](#テスト技法)
 - [テスト自動化の8原則](#テスト自動化の8原則)
+- [フィクスチャ](#フィクスチャ)
+- [並列実行](#並列実行)
 - [参考情報](#その他参考情報)
 
 ## VS Code拡張機能
@@ -415,6 +417,197 @@ test.afterEach();
 1. test
 1. afterEach
 1. afterAll
+
+## フィクスチャ
+
+### フィクスチャとは
+
+テスト実行時に毎回（または一度だけ）用意したい前提状態・共有オブジェクトを提供する仕組み。Playwrightでは`test`に対して独自のフィクスチャを拡張し、テスト内で型安全に利用できる。
+
+### テスト用フィクスチャの拡張（ファイルローカル）
+
+```ts
+// example.spec.ts
+import { test as base, expect } from "@playwright/test";
+
+type Fixtures = {
+  apiBaseUrl: string;
+};
+
+const test = base.extend<Fixtures>({
+  apiBaseUrl: [
+    async ({}, use) => {
+      // 実運用なら .env などから解決
+      const url = "https://api.example.com";
+      await use(url);
+    },
+    { scope: "test" },
+  ],
+});
+
+test("APIベースURLが利用できる", async ({ page, apiBaseUrl }) => {
+  await page.goto(`${apiBaseUrl}/docs`);
+  await expect(page).toHaveTitle(/API/);
+});
+```
+
+- scope: `"test"`は各テストごと、`"worker"`はワーカープロセスごとに一度作成。
+
+### プロジェクトレベルの共通フィクスチャ（test.extend.ts）
+
+```ts
+// tests/test.extend.ts
+import { test as base } from "@playwright/test";
+
+export type AppFixtures = {
+  adminContext: { token: string };
+};
+
+export const test = base.extend<AppFixtures>({
+  adminContext: [
+    async ({}, use) => {
+      // 例: ログインAPIを叩いてトークンを取得
+      const token = "FAKE_TOKEN";
+      await use({ token });
+    },
+    { scope: "worker" },
+  ],
+});
+
+export { expect } from "@playwright/test";
+```
+
+```ts
+// example.e2e.spec.ts
+import { test, expect } from "./tests/test.extend";
+
+test("管理者トークンで設定ページにアクセスできる", async ({
+  page,
+  adminContext,
+}) => {
+  await page.goto("/settings");
+  await page.evaluate(
+    (token) => localStorage.setItem("auth", token),
+    adminContext.token
+  );
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "設定" })).toBeVisible();
+});
+```
+
+### Fixture を使った前処理・後処理の共通化
+
+```ts
+// db.extend.ts
+import { test as base } from "@playwright/test";
+
+type DbFixtures = { resetDb: () => Promise<void> };
+
+export const test = base.extend<DbFixtures>({
+  resetDb: async ({}, use) => {
+    // 各テスト前にDBを初期化するイメージ
+    const reset = async () => {
+      // await fetch('http://localhost:3000/test/reset', { method: 'POST' })
+    };
+    await use(reset);
+  },
+});
+```
+
+```ts
+// some.spec.ts
+import { test, expect } from "./db.extend";
+
+test.beforeEach(async ({ resetDb }) => {
+  await resetDb();
+});
+
+test("一覧が空で表示される", async ({ page }) => {
+  await page.goto("/items");
+  await expect(page.getByRole("row")).toHaveCount(1); // ヘッダーのみ
+});
+```
+
+## 並列実行
+
+### 基本
+
+Playwrightはデフォルトでワーカー（プロセス）単位にテストを並列実行する。並列度は設定またはCLIで調整可能。高コストな準備を`scope: "worker"`のフィクスチャで共有することで高速化できる。
+
+### 設定例（playwright.config.ts）
+
+```ts
+// playwright.config.ts
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  // ファイル間も最大限並列に動かす
+  fullyParallel: true,
+
+  // マシンやCIに合わせて調整（数値 or パーセンテージ）
+  workers: process.env.CI ? 4 : "50%",
+
+  // 複数ブラウザ/デバイスを並列に回す
+  projects: [
+    { name: "chromium", use: { browserName: "chromium" } },
+    { name: "firefox", use: { browserName: "firefox" } },
+    { name: "webkit", use: { browserName: "webkit" } },
+  ],
+});
+```
+
+### スイート単位の並列/直列制御
+
+```ts
+import { test, expect } from "@playwright/test";
+
+// グループ全体を並列化
+test.describe("検索機能", () => {
+  test.describe.configure({ mode: "parallel" });
+
+  test("キーワード検索", async ({ page }) => {
+    await page.goto("/");
+    // ...
+  });
+
+  test("絞り込み検索", async ({ page }) => {
+    await page.goto("/");
+    // ...
+  });
+});
+
+// 依存がある場合は直列化
+test.describe("DBマイグレーションが必要なシナリオ", () => {
+  test.describe.configure({ mode: "serial" });
+
+  test("初期化", async ({ page }) => {
+    // マイグレーションなど一度きりの前提
+  });
+
+  test("登録→参照", async ({ page }) => {
+    // 直列で順序を担保
+  });
+});
+```
+
+### CLI制御
+
+```bash
+# ワーカー数を固定
+npx playwright test --workers=4
+
+# シャーディング（全体をn分割して1本実行）
+npx playwright test --shard=1/3
+```
+
+CIではマトリクス（例: shard=1/3, 2/3, 3/3）で並列化すると高速化できる。
+
+### フィクスチャと並列の注意点
+
+- `scope: "worker"`のフィクスチャは同一ワーカー内で共有されるため、高コストなログインやモック起動に適する。
+- 共有リソース（DB/ポート/ファイル）に対する競合を避けるため、テストデータの分離、ユニーク値の付与、トランザクションリセット等を行う。
+- 競合が解決できない場合は、そのスイートのみ`serial`に切り替えるか`--workers=1`で回避する。
+- リトライ有効時は「失敗したテスト×リトライ回数」が追加で走るため、時間増加に留意する。
 
 ## スクショとビデオについて
 
