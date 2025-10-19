@@ -1,3 +1,4 @@
+import { showToast } from "@/app/utils/uiService/toastService";
 import axios from "axios";
 
 export const api = axios.create({
@@ -33,16 +34,32 @@ api.interceptors.response.use(
 
     if (status === 401) {
       console.warn(`[APIレスポンス] 🔒 401 Unauthorized: ${url}`);
+      showToast("warn", "認証が必要です。再度ログインしてください。");
       if (typeof window !== "undefined") {
         // ログアウト処理やリダイレクトを必要に応じてここに書く
         // localStorage.removeItem("token");
         // window.location.href = "/login";
       }
-    } else {
-      console.error(
-        `[APIレスポンス] ${status} Error: ${url}`,
-        error.response?.data
-      );
+      return;
+    } else if (status === 403) {
+      // 権限エラー
+      console.warn("アクセスが拒否されました。");
+      showToast("error", "アクセスが拒否されました。");
+      return;
+    }
+    // 400番台のその他のエラー
+    if (status >= 400 && status < 500) {
+      // それ以外のクライアントエラー（例：バリデーションなど）
+      console.warn("入力内容を確認してください。");
+      showToast("error", "入力内容を確認してください。");
+      return;
+    }
+    // 500番台のエラー
+    if (status >= 500) {
+      // サーバーエラー
+      console.warn("サーバーでエラーが発生しました。");
+      showToast("error", "サーバーでエラーが発生しました。");
+      return;
     }
 
     return Promise.reject(error);
