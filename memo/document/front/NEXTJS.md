@@ -10,6 +10,7 @@
   - [SSG (Static Site Generation)](#3-ssg-static-site-generation)
   - [ISR (Incremental Static Regeneration)](#4-isr-incremental-static-regeneration)
   - [キャッシュ戦略まとめ](#キャッシュ戦略まとめ)
+- [よくある用語まとめ（Next.js＋API関連）](#よくある用語まとめnextjsapi関連)
 
 ## Next.js内部ライブラリ一覧
 
@@ -206,3 +207,23 @@ export default async function News() {
 | ISR      | 時々更新が必要な静的ページ       | Data Cache (`revalidate`)     | `revalidate` を指定            |
 
 この構成により、それぞれのレンダリング方式とキャッシュ管理の適切な選択が可能になります
+
+# よくある用語まとめ（Next.js＋API関連）
+
+| 用語                                        | 説明                                                                                            |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **API (Application Programming Interface)** | アプリケーション間でデータや機能をやり取りする仕組み。HTTP経由のAPIを「Web API」と呼ぶ。        |
+| **エンドポイント (Endpoint)**               | APIが提供するアクセス先のURL。例：`https://api.example.com/users`                               |
+| **リクエスト (Request)**                    | クライアント（ブラウザなど）がAPIに送る要求。GET / POST などのHTTPメソッドを使う。              |
+| **レスポンス (Response)**                   | APIから返されるデータ（通常はJSON形式）。                                                       |
+| **ヘッダー (Header)**                       | リクエストやレスポンスに付けるメタ情報（例：APIキー、Content-Type など）。                      |
+| **HTTPメソッド**                            | APIの操作種別：GET（取得）、POST（登録）、PUT（更新）、DELETE（削除）など。                     |
+| **APIキー (API Key)**                       | 外部サービス利用者を識別・認証するための文字列。                                                |
+| **環境変数 (.env)**                         | APIキーなどを安全に管理するための設定ファイル。Gitに含めない。                                  |
+| **NextResponse**                            | Next.jsでAPIレスポンスを返すためのオブジェクト。`NextResponse.json({ message })` のように使う。 |
+| **App Router**                              | `app/` ディレクトリを使った新しいルーティングシステム。ページもAPIも同じルールで構成。          |
+| **API Routes (旧)**                         | `pages/api/**` に置くことでAPIを定義できる旧構文。                                              |
+| **Route Handlers (新)**                     | `app/api/**/route.ts` に置くことでAPIを定義するApp Router構文。                                 |
+| **Middleware**                              | APIやページにアクセスする前に実行される共通処理。認証やログなどを実装可能。                     |
+| **NextResponse.redirect()**                 | APIやmiddlewareでリダイレクトを実行するための関数。                                             |
+| **NextRequest**                             | Next.jsのAPIルートで受け取るリクエストオブジェクト。標準の`Request`とほぼ同等。                 |
