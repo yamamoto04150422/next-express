@@ -38,11 +38,23 @@ api.interceptors.response.use(
         // localStorage.removeItem("token");
         // window.location.href = "/login";
       }
-    } else {
-      console.error(
-        `[APIレスポンス] ${status} Error: ${url}`,
-        error.response?.data
-      );
+      return;
+    } else if (status === 403) {
+      // 権限エラー
+      console.warn("アクセスが拒否されました。");
+      return;
+    }
+    // 400番台のその他のエラー
+    if (status >= 400 && status < 500) {
+      // それ以外のクライアントエラー（例：バリデーションなど）
+      console.warn("入力内容を確認してください。");
+      return;
+    }
+    // 500番台のエラー
+    if (status >= 500) {
+      // サーバーエラー
+      console.warn("サーバーでエラーが発生しました。");
+      return;
     }
 
     return Promise.reject(error);
