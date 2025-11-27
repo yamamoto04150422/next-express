@@ -93,6 +93,7 @@ export default function StepZero({
     retry: false, // エラー時に再試行しない
     enabled: false, // 初回は自動でフェッチしない
     refetchOnWindowFocus: false, // ウィンドウフォーカス時に再フェッチしない
+    placeholderData: (prev) => prev, // 前回のデータをプレースホルダーとして使用
   });
 
   const [affiliationsData, setAffiliationsData] = useState<Affiliation[]>(
