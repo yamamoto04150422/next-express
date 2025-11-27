@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { LocaleJp } from "../../utils/LocaleJp";
 import { useEffectOnce } from "../..//hooks/CustomHooks";
+import { Provider } from "jotai";
+import { DevTools } from "jotai-devtools";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -32,7 +34,10 @@ export default function Providers({ children }: { children: ReactNode }) {
     <PrimeReactProvider>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <Provider>
+            <DevTools />
+            {children}
+          </Provider>
         </QueryClientProvider>
       </SessionProvider>
     </PrimeReactProvider>
