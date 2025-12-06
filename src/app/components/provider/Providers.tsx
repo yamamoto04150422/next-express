@@ -4,11 +4,21 @@
 import { PrimeReactProvider, addLocale, locale } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode, useState } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ReactNode, useState, useEffect } from "react";
 import { LocaleJp } from "../../utils/LocaleJp";
 import { useEffectOnce } from "../..//hooks/CustomHooks";
 import { Provider } from "jotai";
-import { DevTools } from "jotai-devtools";
+import dynamic from "next/dynamic";
+import "jotai-devtools/styles.css";
+
+// Jotai DevToolsを動的インポート（SSRを回避し、エラーを防ぐ）
+const JotaiDevTools = dynamic(
+  () => import("jotai-devtools").then((mod) => ({ default: mod.DevTools })),
+  {
+    // ssr: false,
+  }
+);
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -18,25 +28,43 @@ import { DevTools } from "jotai-devtools";
 addLocale("jp", LocaleJp);
 locale("jp");
 
-const queryClient = new QueryClient();
-
 export default function Providers({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000, // 1分
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
   const [showScreen, setShowScreen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // FOUC対策
   useEffectOnce(() => {
     setShowScreen(true);
   });
 
+  // クライアントサイドでのみDevToolsをマウント
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!showScreen) return null;
+
+  const isDev = process.env.NODE_ENV === "development";
 
   return (
     <PrimeReactProvider>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
           <Provider>
-            <DevTools />
+            {isDev && isMounted && <JotaiDevTools />}
             {children}
+            {isDev && isMounted && <ReactQueryDevtools initialIsOpen={false} />}
           </Provider>
         </QueryClientProvider>
       </SessionProvider>
