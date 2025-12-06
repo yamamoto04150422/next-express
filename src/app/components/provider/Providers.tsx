@@ -4,11 +4,13 @@
 import { PrimeReactProvider, addLocale, locale } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactNode, useState } from "react";
 import { LocaleJp } from "../../utils/LocaleJp";
 import { useEffectOnce } from "../..//hooks/CustomHooks";
 import { Provider } from "jotai";
 import { DevTools } from "jotai-devtools";
+import "jotai-devtools/styles.css";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -18,9 +20,18 @@ import { DevTools } from "jotai-devtools";
 addLocale("jp", LocaleJp);
 locale("jp");
 
-const queryClient = new QueryClient();
-
 export default function Providers({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000, // 1分
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
   const [showScreen, setShowScreen] = useState(false);
 
   // FOUC対策
@@ -35,8 +46,11 @@ export default function Providers({ children }: { children: ReactNode }) {
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
           <Provider>
-            <DevTools />
+            {process.env.NODE_ENV === "development" && <DevTools />}
             {children}
+            {process.env.NODE_ENV === "development" && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
           </Provider>
         </QueryClientProvider>
       </SessionProvider>
