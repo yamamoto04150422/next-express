@@ -16,7 +16,7 @@ import "jotai-devtools/styles.css";
 const JotaiDevTools = dynamic(
   () => import("jotai-devtools").then((mod) => ({ default: mod.DevTools })),
   {
-    ssr: false,
+    // ssr: false,
   }
 );
 
