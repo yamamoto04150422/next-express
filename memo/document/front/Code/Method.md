@@ -103,7 +103,7 @@ columnItem
     updated[item] = [];
     useForm?.setValue(`${name}${item}`, null);
   });
-// 整理板
+// 整理版
 columnItem
   .filter((item) => item > currentIndex)
   .map((item) => ({

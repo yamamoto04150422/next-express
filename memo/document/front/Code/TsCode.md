@@ -96,7 +96,7 @@ const name = user.name || "ゲスト";
 
 過去
 
-```rs
+```ts
 const user = null;
 
 // NG: user が null だとエラーになる

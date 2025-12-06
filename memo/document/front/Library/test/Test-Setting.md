@@ -1,7 +1,7 @@
 ```bash
 # 必要なパッケージをインストール
 npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest @types/jest
-# 必要＿
+# 必要に応じて
 npm install --save-dev jest-environment-jsdom
 
 # tsの場合のみ
@@ -69,7 +69,7 @@ npm uninstall jest-environment-jsdom
 
 ```
 
-[issues](ttps://github.com/primefaces/primeng/issues/14085)
+[issues](https://github.com/primefaces/primeng/issues/14085)
 
 ### 参考リンク
 
