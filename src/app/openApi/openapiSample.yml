@@ -1,0 +1,297 @@
+openapi: 3.0.0
+info:
+  title: Order and User Management API
+  version: 1.0.0
+  description: 注文とユーザー、両方のリソースを管理するAPI。
+
+servers:
+  - url: /api/v1
+
+paths:
+  # =======================================================
+  # 注文リソース (Orders)
+  # =======================================================
+  /orders:
+    post:
+      summary: "新しい注文を登録する"
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderCreateRequest"
+      responses:
+        "201":
+          description: 注文が正常に作成されました
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: リクエストのデータが無効です
+
+  /orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+        description: 操作対象の注文ID
+
+    get:
+      summary: "特定の注文の詳細を取得する"
+      operationId: getOrderById
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: 注文データ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: 指定された注文が見つかりません
+
+    put:
+      summary: "特定の注文全体を完全更新する"
+      operationId: replaceOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        "200":
+          description: 注文が正常に更新されました
+        "404":
+          description: 指定された注文が見つかりません
+
+    patch:
+      summary: "特定の注文データの一部のみを部分更新する"
+      operationId: updateOrderPartially
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderPartialUpdate"
+      responses:
+        "200":
+          description: 注文の一部が正常に更新されました
+        "404":
+          description: 指定された注文が見つかりません
+
+    delete:
+      summary: "特定の注文を削除する"
+      operationId: deleteOrder
+      tags:
+        - Orders
+      responses:
+        "204":
+          description: 注文が正常に削除されました (コンテンツなし)
+        "404":
+          description: 指定された注文が見つかりません
+
+  /orders/validate:
+    get:
+      summary: "注文データの妥当性を事前にチェックする (非CRUD操作: GET)"
+      operationId: validateOrder
+      tags:
+        - Orders
+      parameters:
+        - name: couponCode
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 検証するクーポンコード
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: 注文金額
+      responses:
+        "200":
+          description: 検証結果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+
+  # =======================================================
+  # ユーザーリソース (Users)
+  # =======================================================
+  /users:
+    post:
+      summary: "新しいユーザーを登録する"
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+      responses:
+        "201":
+          description: ユーザーが正常に作成されました
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: リクエストのデータが無効です
+
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+        description: 操作対象のユーザーID
+
+    get:
+      summary: "特定のユーザーの詳細を取得する"
+      operationId: getUserById
+      tags:
+        - Users
+      responses:
+        "200":
+          description: ユーザーデータ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: 指定されたユーザーが見つかりません
+
+    # PUT, PATCH, DELETE操作も、上記と同様にUsersリソースに追加できます (省略)
+
+  /users/validate:
+    get:
+      summary: "ユーザーデータの妥当性を事前にチェックする (非CRUD操作: GET)"
+      operationId: validateUser
+      tags:
+        - Users
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 検証するユーザー名
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 検証するパスワード (通常はハッシュ化前の生のデータ)
+      responses:
+        "200":
+          description: 検証結果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserValidationResult"
+
+components:
+  schemas:
+    # --- 注文関連スキーマ ---
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        status:
+          type: string
+          enum: [PENDING, SHIPPED, DELIVERED, CANCELLED]
+        totalAmount:
+          type: number
+          format: float
+        items:
+          type: array
+          items:
+            type: string
+
+    OrderCreateRequest:
+      type: object
+      required: [items, totalAmount]
+      properties:
+        items:
+          $ref: "#/components/schemas/Order/properties/items"
+        couponCode:
+          type: string
+          nullable: true
+        totalAmount:
+          $ref: "#/components/schemas/Order/properties/totalAmount"
+
+    OrderPartialUpdate:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/Order/properties/status"
+        couponCode:
+          type: string
+          nullable: true
+
+    ValidationResult:
+      type: object
+      description: 注文妥当性チェックの結果
+      properties:
+        isValid:
+          type: boolean
+        message:
+          type: string
+
+    # --- ユーザー関連スキーマ ---
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+
+    UserCreateRequest:
+      type: object
+      required: [username, password, email]
+      properties:
+        username:
+          $ref: "#/components/schemas/User/properties/username"
+        email:
+          $ref: "#/components/schemas/User/properties/email"
+        password:
+          type: string
+          format: password
+          description: ユーザーのパスワード (作成時のみ必要)
+
+    UserValidationResult:
+      type: object
+      description: ユーザーデータ妥当性チェックの結果
+      properties:
+        isValid:
+          type: boolean
+        message:
+          type: string

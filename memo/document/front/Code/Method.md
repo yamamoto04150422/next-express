@@ -1,34 +1,117 @@
+# 目次
+
+1. [メソッド一覧](#メソッド一覧)
+2. [引数の組み合わせ](#引数の組み合わせ)
+3. [戻り値の組み合わせ](#戻り値の組み合わせ)
+4. [オーバーロード](#オーバーロード)
+5. [デフォルト引数](#デフォルト引数)
+6. [可変長引数](#可変長引数)
+7. [静的メソッド](#静的メソッド)
+8. [インスタンスメソッド](#インスタンスメソッド)
+9. [その他の組み合わせ例](#その他の組み合わせ例)
+10. [便利テク & パターン集](#便利テク--パターン集)
+    - [filter → map](#filter--map)
+    - [map → filter](#map--filter)
+    - [flatMap / map → flat](#flat--flatmap)
+    - [filter → some / every](#filter--someevery)
+    - [reduce 応用](#reduce応用)
+    - [forEach 注意点](#foreach注意点)
+11. [実務サンプル](#実務サンプル)
+
+---
+
 # メソッド一覧
 
-目的・特徴・大量データ時の考慮をまとめた
+大量データでは `find, findIndex, some, every` のように途中終了できるメソッドが有効。  
+加工には `map, filter, reduce, flatMap` を組み合わせて使う。
 
-## 大量データ
+| メソッド      | 使い方例                         | 主な目的                         | 戻り値            | 終了タイミング | 大量データ時の考慮 | 特徴       |
+| ------------- | -------------------------------- | -------------------------------- | ----------------- | -------------- | ------------------ | ---------- |
+| **find**      | `arr.find(x => x.id === 1)`      | 条件に一致する最初の要素         | 要素 or undefined | 一致で終了     | 途中終了できる     | 1件取得    |
+| **findIndex** | `arr.findIndex(x => x.id === 1)` | 条件に一致する最初のインデックス | 数値 or -1        | 一致で終了     | 途中終了できる     | index 取得 |
+| **map**       | `arr.map(x => x * 2)`            | 要素変換して新しい配列           | 新しい配列        | 最後まで       | 全件処理           | 変換       |
+| **filter**    | `arr.filter(x => x.active)`      | 条件抽出                         | 新しい配列        | 最後まで       | 全件処理           | 抽出       |
+| **reduce**    | `arr.reduce((a,x)=>a+x,0)`       | 集約（1値）                      | 単一の値          | 最後まで       | 全件処理           | 集計       |
+| **some**      | `arr.some(x => x.active)`        | 条件を満たす要素が存在するか     | bool              | 一致で終了     | 途中終了           | 存在確認   |
+| **every**     | `arr.every(x => x.active)`       | 全要素が条件を満たすか           | bool              | 不一致で終了   | 途中終了           | 全件確認   |
+| **forEach**   | `arr.forEach(x=>...)`            | 副作用                           | undefined         | 最後まで       | 全件処理           | break不可  |
+| **flat**      | `[1,[2,3]].flat()`               | ネストを平坦化                   | 新しい配列        | 最後まで       | ネスト深いと重い   | flatten    |
+| **flatMap**   | `arr.flatMap(x => x.items)`      | map + flat                       | 新しい配列        | 最後まで       | 中間配列減る       | ネスト変換 |
 
-途中終了できるメソッド`find, findIndex, some, every`を選ぶと効率的
+---
 
-全件処理が必須なら`map,filter`を使うが、データサイズ次第でパフォーマンスに注意
+# 便利テク & パターン集
 
-## APIレスポンス
+## filter → map
 
-基本は `map,filter,reduce` の組み合わせで加工する
+絞り込み → 加工
 
-ネストレスポンス（例: posts → comments）は `flatMap` が便利
+```ts
+const activeNames = users.filter((u) => u.active).map((u) => u.name);
+```
 
-## 可読性
+## map → filter
 
-複雑な reduce は可読性が落ちやすい → `map + filter` の組み合わせで書いた方が理解しやすい場合も多い
+加工 → 判定
 
-速度差は微小だが、早期終了できるかどうかが実運用で効く
+```ts
+const expensive = prices.map((p) => p * 1.1).filter((p) => p >= 1000);
+```
 
-| メソッド      | 使い方例                                   | 主な目的                               | 戻り値              | 処理終了タイミング     | 大量データ時の考慮                                | 特徴・用途                       |
-| ------------- | ------------------------------------------ | -------------------------------------- | ------------------- | ---------------------- | ------------------------------------------------- | -------------------------------- |
-| **find**      | `arr.find(x => x.id === 1)`                | 条件に一致する最初の要素を取得         | 要素 or `undefined` | 一致した時点で終了     | 先頭で見つかれば高速。大量データでも効率的        | 最初の1件だけ欲しい時に最適      |
-| **findIndex** | `arr.findIndex(x => x.id === 1)`           | 条件に一致する最初のインデックスを取得 | 数値 or `-1`        | 一致した時点で終了     | `find` 同様、途中終了可能で効率的                 | インデックスが必要なときに使用   |
-| **map**       | `arr.map(x => x.value * 2)`                | 各要素を変換して新しい配列を作成       | 新しい配列          | 最後まで処理           | 全件変換するので処理コスト大。中間配列も増える    | データ整形やUI描画用に便利       |
-| **filter**    | `arr.filter(x => x.active)`                | 条件に一致する要素を抽出               | 新しい配列          | 最後まで処理           | 必ず全件走査 → 大量データで一部だけ必要なら非効率 | 複数要素をまとめて抽出           |
-| **reduce**    | `arr.reduce((acc, x) => acc + x.value, 0)` | 配列を1つの値に集約                    | 単一の値            | 最後まで処理           | 集計・変換を効率的に行えるが可読性に注意          | 合計、オブジェクト変換などに柔軟 |
-| **some**      | `arr.some(x => x.active)`                  | 条件を満たす要素が1つでもあるか判定    | `true` / `false`    | 一致した時点で終了     | 途中終了可能 → 大量データでも効率的               | 存在チェックに最適               |
-| **every**     | `arr.every(x => x.active)`                 | すべての要素が条件を満たすか判定       | `true` / `false`    | 不一致が出た時点で終了 | 途中終了可能 → 大量データでも効率的               | 全件の条件チェック               |
-| **forEach**   | `arr.forEach(x => console.log(x))`         | 各要素に副作用を実行                   | `undefined`         | 最後まで処理           | 必ず全件処理 → 大量データではコスト高             | break不可、副作用用途のみ        |
-| **flat**      | `[1,[2,3]].flat()`                         | ネスト配列を平坦化                     | 新しい配列          | 最後まで処理           | ネストが深い場合はコスト増                        | 配列の正規化に便利               |
-| **flatMap**   | `arr.flatMap(x => x.items)`                | map と flat を同時に実行               | 新しい配列          | 最後まで処理           | 中間配列を減らせるので map+flat より効率的        | ネストデータの変換               |
+## flatMap / map → flat
+
+ネストレスポンス整形
+
+```ts
+const comments = posts.flatMap((p) => p.comments);
+```
+
+## filter → some/every
+
+状態を絞った上で存在チェック
+
+```ts
+const hasAdmin = users.filter((u) => u.active).some((u) => u.role === "admin");
+```
+
+## reduce応用
+
+集計・グルーピング
+
+```ts
+const group = items.reduce((acc, x) => {
+  acc[x.category] ??= [];
+  acc[x.category].push(x);
+  return acc;
+}, {});
+```
+
+## forEach注意点
+
+1. break不可
+1. returnで外に返らない
+1. asyncと相性悪い→ async処理は for...of を使う
+
+## 実務サンプル
+
+フォーム項目の currentIndex 以降を初期化するケース
+
+```ts
+columnItem
+  .filter((item) => currentIndex < item)
+  .forEach((item) => {
+    updated[item] = [];
+    useForm?.setValue(`${name}${item}`, null);
+  });
+// 整理板
+columnItem
+  .filter((item) => item > currentIndex)
+  .map((item) => ({
+    index: item,
+    key: `${name}${item}`,
+  }))
+  .forEach(({ index, key }) => {
+    updated[index] = [];
+    useForm?.setValue(key, null);
+  });
+```
