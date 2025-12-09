@@ -235,6 +235,8 @@ node .storybook/generateStory.js src/app/components/atoms/actionButton/ActionBut
 - **`docs/`**  
   API仕様やアーキテクチャ設計書など、追加のドキュメントを管理するディレクトリ。
 
+  https://tanstack.com/query/latest/docs/framework/react/devtools
+
 ---
 
 ## 補足
