@@ -17,6 +17,7 @@
     - [reduce 応用](#reduce応用)
     - [forEach 注意点](#foreach注意点)
 11. [実務サンプル](#実務サンプル)
+12. [mapとflatMapの違い](#mapとflatMapの違い)
 
 ---
 
@@ -115,3 +116,147 @@ columnItem
     useForm?.setValue(key, null);
   });
 ```
+
+# mapとflatMapの違い
+
+## 結論
+
+- **map**：要素をそのまま「変換」する
+- **flatMap**：変換したあと **配列を1段階平坦化** する
+
+> flatMap = map + flat
+
+---
+
+## map の基本
+
+```ts
+const nums = [1, 2, 3];
+
+const result = nums.map((n) => n * 2);
+// [2, 4, 6]
+```
+
+- 各要素を 1 対 1 で変換
+- 戻り値をそのまま配列に並べる
+
+---
+
+## map で配列を返すとどうなるか
+
+```ts
+const nums = [1, 2, 3];
+
+const result = nums.map((n) => [n, n * 2]);
+// [[1, 2], [2, 4], [3, 6]]
+```
+
+- map は平坦化しない
+- **配列の配列** ができる
+
+---
+
+## flatMap の基本
+
+```ts
+const nums = [1, 2, 3];
+
+const result = nums.flatMap((n) => [n, n * 2]);
+// [1, 2, 2, 4, 3, 6]
+```
+
+### 処理イメージ
+
+1. map と同じように変換
+2. 返ってきた配列を **1段階だけ flat**
+
+---
+
+## 図で理解する
+
+### map
+
+```
+[1, 2, 3]
+  ↓ map
+[[1,2], [2,4], [3,6]]
+```
+
+### flatMap
+
+```
+[1, 2, 3]
+  ↓ map
+[[1,2], [2,4], [3,6]]
+  ↓ flat
+[1, 2, 2, 4, 3, 6]
+```
+
+---
+
+## React でよくある例
+
+### map の場合（ネストしてしまう）
+
+```tsx
+errors.map((error) => error.messages.map((msg) => <li key={msg}>{msg}</li>));
+```
+
+- 結果：`JSX.Element[][]`
+
+---
+
+### flatMap の場合（そのまま描画できる）
+
+```tsx
+errors.flatMap((error) =>
+  error.messages.map((msg) => <li key={msg}>{msg}</li>)
+);
+```
+
+- 結果：`JSX.Element[]`
+
+---
+
+## filter + map の代替パターン
+
+### 通常
+
+```ts
+items.filter((item) => item.enabled).map((item) => item.value);
+```
+
+### flatMap
+
+```ts
+items.flatMap((item) => (item.enabled ? [item.value] : []));
+```
+
+- 条件に合わないものは `[]`
+- flatMap により自然に除外される
+
+---
+
+## 使い分け指針
+
+- 1対1の変換 → **map**
+- 1対多の変換 → **flatMap**
+- 配列の配列が欲しい → **map**
+- 平坦な配列が欲しい → **flatMap**
+
+---
+
+## 注意点
+
+- flatMap が平坦化するのは **1段階のみ**
+
+```ts
+[1, 2].flatMap((n) => [[n]]);
+// [[1], [2]]
+```
+
+---
+
+## 覚え方
+
+> **flatMap = map して flat**
