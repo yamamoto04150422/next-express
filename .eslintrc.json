@@ -3,5 +3,6 @@
     "next/core-web-vitals",
     "next/typescript",
     "plugin:storybook/recommended"
-  ]
+  ],
+  "ignorePatterns": ["src/app/openApi/generated/**/*"]
 }
