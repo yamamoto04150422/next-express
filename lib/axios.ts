@@ -1,11 +1,18 @@
 import { showToast } from "@/app/utils/uiService/toastService";
-import axios from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 export const api = axios.create({
   baseURL: "", // APIのベースURLを設定
   timeout: 10000, // タイムアウト時間を設定（ミリ秒単位）
   withCredentials: true, // クッキーを送信する場合はtrueに設定
 });
+
+// Orval用のmutator関数
+export const apiClient = async <T = unknown, D = unknown>(
+  config: AxiosRequestConfig<D>
+): Promise<AxiosResponse<T>> => {
+  return api.request<T, AxiosResponse<T>, D>(config);
+};
 
 api.interceptors.request.use(
   (config) => {

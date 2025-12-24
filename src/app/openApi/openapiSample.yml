@@ -235,18 +235,22 @@ components:
       required: [items, totalAmount]
       properties:
         items:
-          $ref: "#/components/schemas/Order/properties/items"
+          type: array
+          items:
+            type: string
         couponCode:
           type: string
           nullable: true
         totalAmount:
-          $ref: "#/components/schemas/Order/properties/totalAmount"
+          type: number
+          format: float
 
     OrderPartialUpdate:
       type: object
       properties:
         status:
-          $ref: "#/components/schemas/Order/properties/status"
+          type: string
+          enum: [PENDING, SHIPPED, DELIVERED, CANCELLED]
         couponCode:
           type: string
           nullable: true
@@ -279,9 +283,10 @@ components:
       required: [username, password, email]
       properties:
         username:
-          $ref: "#/components/schemas/User/properties/username"
+          type: string
         email:
-          $ref: "#/components/schemas/User/properties/email"
+          type: string
+          format: email
         password:
           type: string
           format: password
