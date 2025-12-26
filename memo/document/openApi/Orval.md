@@ -2,7 +2,7 @@
 
 ## 1. Orval の概念
 
-- **OpenAPI から TypeScript の API 呼び出しコードを自動生成するツール**
+- OpenAPI 定義から「API呼び出し関数・型・React Query Hook」を自動生成するツール。
 - 主に以下を自動化:
   - axios を用いた API リクエスト関数
   - React Query の useQuery / useMutation Hook
@@ -11,6 +11,264 @@
 
 - 生成コードは「画面単位での API 利用」を想定
 - 従来の手書き Hook (`useInitialQuery`) は原則不要
+
+### 1-1. 一言でいうと
+
+**OpenAPI 定義から「API呼び出し関数・型・React Query Hook」を自動生成するツール**。
+
+---
+
+### 1-2. orval が解決する課題
+
+導入前によくある問題：
+
+- API Path を文字列で直書きしている
+- axios / useQuery / queryKey を毎回手書き
+- 型定義が API 仕様とズレる
+- queryKey の管理が属人化する
+
+👉 **OpenAPI を正としてコードを自動生成することで、これらを根本から解消**
+
+---
+
+## 2. 全体アーキテクチャ（責務分離）
+
+```
+OpenAPI
+  ├─ tag           → ファイル単位
+  ├─ operationId   → 関数名 / Hook 名
+  └─ schema        → 型定義
+
+orval
+  ├─ API関数
+  ├─ useQuery / useMutation
+  ├─ queryKey
+  └─ 型
+
+axios.ts
+  └─ interceptor / 共通エラーハンドリング
+```
+
+---
+
+## 3. OpenAPI 各要素の役割
+
+### 3-1. tag
+
+- API の分類単位
+- `mode: tags` の場合 **ファイル名になる**
+
+```
+tags:
+  - kkg-08132-reportgroup-master-toroku-resource
+```
+
+---
+
+### 3-2. operationId（最重要）
+
+**API を一意に識別する ID**
+
+orval では以下の起点になる：
+
+- API 関数名（例：`init()`）
+- React Query Hook 名（`useInit()`）
+- queryKey
+- 型名
+
+👉 **設計対象・命名ルール必須**
+
+推奨：
+
+- 動詞 + 対象
+- 画面名ではなく API の責務
+
+例：
+
+```
+getReportGroupMasterInit
+createReportGroupMaster
+deleteReportGroupMaster
+```
+
+---
+
+### 3-3. summary
+
+- API 一覧表示用の短文
+- 1行で「何をする API か」
+- 日本語で OK
+
+```
+summary: レポートグループ初期取得
+```
+
+---
+
+### 3-4. description
+
+- 詳細説明用（Markdown 可）
+- 業務ルール・注意点を書く場所
+
+必須ではないが、以下の場合は有用：
+
+- 権限条件がある
+- 暗黙仕様がある
+- パラメータ制約がある
+
+summary と同じ内容しか無いなら **省略可**
+
+---
+
+## 4. orval が生成するもの
+
+### 4-1. API 関数
+
+```ts
+init(params, signal);
+```
+
+- axios を直接呼ばない
+- mutator 経由で API 実行
+
+---
+
+### 4-2. React Query Hook
+
+```ts
+useInit(params, options);
+useToroku(options);
+useSakujo(options);
+```
+
+- useQuery / useMutation をラップ
+- 型安全
+
+---
+
+### 4-3. getXxxQueryKey
+
+```ts
+getInitQueryKey(params);
+```
+
+**invalidateQueries 用の queryKey 再現関数**
+
+```ts
+queryClient.invalidateQueries({
+  queryKey: getInitQueryKey(params),
+});
+```
+
+---
+
+## 5. axios.ts と mutator の考え方
+
+### 5-1. axiosInstance
+
+- axios.create した実体
+- interceptor を管理
+
+### 5-2. apiClient（mutator）
+
+- orval が呼び出す関数
+- AxiosResponse を返す
+
+```ts
+export const apiClient = <T = unknown>(
+  config: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return axiosInstance.request<T>(config);
+};
+```
+
+命名の意味：
+
+- axiosInstance = 実体
+- apiClient = orval の入口
+
+---
+
+## 6. interceptor の return ルール
+
+### 成功時
+
+```ts
+return response;
+```
+
+### エラー時
+
+```ts
+return Promise.reject(error);
+```
+
+👉 **常に reject することで React Query にエラーが伝播する**
+
+---
+
+## 7. 既存コードとの整理
+
+### 自作 useInitialQuery
+
+```ts
+useInitialQuery(apiPath, queryKey);
+```
+
+orval 導入後：
+
+- 原則不要
+- orval Hook に置き換える
+
+例：
+
+```ts
+useInit(params, {
+  query: {
+    retry: false,
+    refetchOnWindowFocus: false,
+  },
+});
+```
+
+---
+
+## 8. package.json 設定
+
+```json
+"scripts": {
+  "orval": "orval"
+}
+```
+
+```bash
+npm run orval
+```
+
+---
+
+## 9. 運用時の指針（重要）
+
+- OpenAPI が正
+- フロントは生成物を使うだけ
+- queryKey を手書きしない
+- axios を直接呼ばない
+- operationId 命名に時間をかける
+
+---
+
+## 10. まとめ
+
+- orval = API 契約からフロント実装を自動生成
+- operationId が全ての起点
+- axios / React Query の責務が明確になる
+- 手書きコードが減り、保守性が上がる
+
+**orval は「導入して終わり」ではなく「API 設計を意識させるツール」**
+
+## 1. Orval の概念
+
+説明済み
 
 ## 2. 導入手順
 
