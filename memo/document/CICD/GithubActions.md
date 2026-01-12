@@ -305,8 +305,6 @@ env:
   API_BASE_URL: "${{ vars.API_BASE_URL }}"
 ```
 
----
-
 ## Secrets
 
 **機密情報（トークン・パスワードなど）** を扱うための仕組み。
@@ -364,6 +362,190 @@ ${{ github.event.pull_request.html_url }}
 | JSON 操作    | fromJson()        | JSON をオブジェクト化           | 特殊用途       |
 | ハッシュ生成 | hashFiles()       | ファイルのハッシュを生成        | キャッシュキー |
 
+## if: 条件式の実践パターン集
+
+`if:` を使うことで、**ジョブやステップの実行可否を条件付きで制御**できる。
+CI/CD の無駄な実行を減らし、意図を明確にするために重要。
+
+### 条件分岐の基本
+
+- `if:` は **Job / Step の両方に指定可能**
+- 式は `${{ }}` を省略して書くのが推奨
+
+```yaml
+- name: Run only on main
+  if: github.ref_name == 'main'
+  run: echo "main branch"
+```
+
+### ステータスチェック関数
+
+前の処理結果に応じて条件分岐するための関数。
+
+| 関数        | 意味                 | 主な用途     |
+| ----------- | -------------------- | ------------ |
+| success()   | それまでの処理が成功 | 通常処理     |
+| failure()   | どこかで失敗         | エラー時処理 |
+| cancelled() | キャンセルされた     | 中断検知     |
+| always()    | 常に true            | 後処理・通知 |
+
+#### 実践例
+
+```yaml
+- name: Notify on failure
+  if: failure()
+  run: echo "Job failed"
+```
+
+※ `failure()` が最もよく使われる
+
+## ログ出力について
+
+### 読みやすいログの基本
+
+- **ジョブ名・ステップ名を必ず付ける**
+- 何をしているステップかがログから一目で分かる
+
+```yaml
+- name: Echo greeting
+  run: echo "hello"
+```
+
+### ワークフロー実行名
+
+実行一覧で誰が起動したか分かるようにする。
+
+```yaml
+run-name: "Run by ${{ github.actor }}"
+```
+
+## ステップ間のデータの共有
+
+ステップ間で値を共有する場合は、**専用の仕組みを使う**。
+
+### GITHUB_OUTPUT（推奨）
+
+- 可読性が高い
+- 現在の推奨方法
+
+```yaml
+- name: Set output
+  run: echo "result=ok" >> "$GITHUB_OUTPUT"
+
+- name: Use output
+  run: echo "${{ steps.set.outputs.result }}"
+```
+
+### GITHUB_ENV
+
+- 後続ステップで使える環境変数を設定
+
+```yaml
+- run: echo "FOO=bar" >> "$GITHUB_ENV"
+```
+
+### その他の関連環境変数
+
+- `GITHUB_HEAD_REF`：PR 元ブランチ名
+
+## GitHub API の利用
+
+### GitHub Token
+
+GitHub Actions では、API 利用のためのトークンが **自動生成** される。
+
+参照方法：
+
+- `${{ secrets.GITHUB_TOKEN }}`
+- `${{ github.token }}`
+
+特徴：
+
+- 明示的に発行不要
+- リポジトリ権限に応じたスコープ
+- API / gh CLI から利用可能
+
+## スターターワークフロー
+
+GitHub には **公式のスターターワークフロー** が用意されている。
+
+特徴：
+
+- 言語・用途別のベストプラクティス
+- CI 設計のリファレンスとして有用
+
+👉 「ゼロから書かない」「迷ったらスターターを見る」が基本
+
+## Event（イベント）
+
+GitHub Actions は **イベント** を起点にワークフローを実行する。
+
+代表例：`push` / `pull_request` / `workflow_dispatch` など。
+
+```yaml
+on:
+  pull_request:
+    paths: ["src/**"]
+```
+
+## イベントのフィルタリング
+
+イベント発火を **条件で絞り込む** 仕組み。
+
+主に「どの変更・どのブランチ・どのタグか」を指定する。
+
+### フィルターの種類と注意点
+
+1. **ignore 系と通常指定は併用不可**
+   - `paths` と `paths-ignore`
+   - `branches` と `branches-ignore`
+
+2. **系統が違う条件は OR 条件になる** ⚠️
+   - `paths` と `branches` は OR
+   - 両方満たす必要はない点に注意
+
+### フィルター一覧
+
+| フィルター        | 内容                             |
+| ----------------- | -------------------------------- |
+| `paths`           | 指定したパスが変更された場合のみ |
+| `paths-ignore`    | 指定したパス以外が変更された場合 |
+| `branches`        | 指定したブランチのみ             |
+| `branches-ignore` | 指定したブランチ以外             |
+| `tags`            | 指定したタグのみ                 |
+| `tags-ignore`     | 指定したタグ以外                 |
+
+## Glob パターン
+
+パス・ブランチ指定で使われる記法。
+
+| 記号 | 意味                    |
+| ---- | ----------------------- |
+| `*`  | `/` を除く0文字以上     |
+| `**` | `/` を含む0文字以上     |
+| `?`  | 任意の1文字             |
+| `+`  | 直前のパターンを1回以上 |
+| `[]` | 文字クラス              |
+| `!`  | 否定                    |
+
+## アクティビティタイプ
+
+一部イベント（例：`pull_request`）は **操作の種類** まで指定可能。
+
+```yaml
+on:
+  pull_request:
+    types: [opened, synchronize]
+```
+
+例：
+
+- `opened`
+- `synchronize`
+- `closed`
+
+👉 **イベント + フィルター + アクティビティタイプ** で発火条件を細かく制御する
+
 ## 補足まとめ
 
 - **Context → env → shell** の流れを意識する
@@ -373,5 +555,11 @@ ${{ github.event.pull_request.html_url }}
 - 式は読みやすさ優先（複雑なら step を分ける）
 
 env を使うことは推奨設計であり、Variables の代替ではない
+
+- `if:` は **無駄な実行を減らす最重要機能**
+- `failure()` + `always()` は覚えておく
+- ログは後から読む前提で書く
+- ステップ間共有は `GITHUB_OUTPUT` を使う
+- GitHub API は `GITHUB_TOKEN` をまず使う
 
 安全性・保守性を高めるための重要な基礎知識
