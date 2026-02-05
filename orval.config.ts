@@ -11,6 +11,10 @@ export default defineConfig({
         query: {
           useQuery: true,
           useMutation: true,
+          options: {
+            retry: false,
+            refetchOnWindowFocus: false,
+          },
         },
         mutator: {
           path: "./lib/axios.ts",
