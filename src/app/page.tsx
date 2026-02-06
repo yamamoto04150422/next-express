@@ -73,6 +73,17 @@ export default function Home() {
         <Link href="/sample">
           <Button label="認証が不要な画面" className="p-button-secondary" />
         </Link>
+        <div style={{ marginTop: 12, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+          <Link href="/sample/zod-sample">
+            <Button label="Zod + useForm サンプル" className="p-button-secondary" />
+          </Link>
+          <Link href="/sample/order-query-sample">
+            <Button
+              label="orval(tanstack) CRUD サンプル"
+              className="p-button-secondary"
+            />
+          </Link>
+        </div>
       </div>
 
       {stats ? (
