@@ -9,6 +9,23 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary 注文一覧を取得する
+ */
+export const listOrdersQueryParams = zod.object({
+  "status": zod.enum(['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']).optional().describe('ステータスでフィルタリング'),
+  "minAmount": zod.number().optional().describe('最小金額でフィルタリング'),
+  "maxAmount": zod.number().optional().describe('最大金額でフィルタリング')
+})
+
+export const listOrdersResponseItem = zod.object({
+  "id": zod.number().optional(),
+  "status": zod.enum(['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']).optional(),
+  "totalAmount": zod.number().optional(),
+  "items": zod.array(zod.string()).optional()
+})
+export const listOrdersResponse = zod.array(listOrdersResponseItem)
+
+/**
  * @summary 新しい注文を登録する
  */
 export const createOrderBody = zod.object({

@@ -76,6 +76,32 @@ export interface UserValidationResult {
   message?: string;
 }
 
+export type ListOrdersParams = {
+/**
+ * ステータスでフィルタリング
+ */
+status?: ListOrdersStatus;
+/**
+ * 最小金額でフィルタリング
+ */
+minAmount?: number;
+/**
+ * 最大金額でフィルタリング
+ */
+maxAmount?: number;
+};
+
+export type ListOrdersStatus = typeof ListOrdersStatus[keyof typeof ListOrdersStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ListOrdersStatus = {
+  PENDING: 'PENDING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
 export type ValidateOrderParams = {
 /**
  * 検証するクーポンコード
