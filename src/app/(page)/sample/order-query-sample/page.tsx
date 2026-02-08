@@ -12,16 +12,140 @@ import {
   listOrdersQueryParams,
   getOrderByIdParams,
 } from "@/app/openApi/generated/zod/orders/orders";
+import { createOrderBody } from "@/app/openApi/generated/zod/orders/orders";
 import {
   useListOrders,
   useGetOrderById,
 } from "@/app/openApi/generated/api/orders/orders";
+import { useCreateOrder } from "@/app/openApi/generated/api/orders/orders";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 type ListParams = z.infer<typeof listOrdersQueryParams>;
 type IdParams = z.infer<typeof getOrderByIdParams>;
+type CreateOrder = z.infer<typeof createOrderBody>;
+
+function CreateOrderForm() {
+  const { control, handleSubmit, reset } = useForm<CreateOrder>({
+    resolver: zodResolver(createOrderBody),
+    defaultValues: { items: [], couponCode: undefined, totalAmount: undefined },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [created, setCreated] = useState<any>(null);
+
+  const createMutation = useCreateOrder();
+
+  const onSubmit = (data: CreateOrder) => {
+    createMutation.mutate(
+      { data: data },
+      {
+        onSuccess: (res) => {
+          setCreated(res.data);
+          reset();
+        },
+      }
+    );
+  };
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{
+          display: "flex",
+          gap: 8,
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Controller
+          name="items"
+          control={control}
+          render={({ field }) => (
+            <input
+              value={(field.value || []).join(", ")}
+              onChange={(e) => {
+                const v = e.target.value;
+                const arr =
+                  v === ""
+                    ? []
+                    : v
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                field.onChange(arr);
+              }}
+              placeholder="items (comma separated)"
+              style={{ minWidth: 240 }}
+            />
+          )}
+        />
+
+        <Controller
+          name="couponCode"
+          control={control}
+          render={({ field }) => (
+            <input
+              placeholder="couponCode (optional)"
+              value={field.value ?? ""}
+              onChange={(e) =>
+                field.onChange(
+                  e.target.value === "" ? undefined : e.target.value
+                )
+              }
+              onBlur={field.onBlur}
+              name={field.name}
+              ref={field.ref}
+            />
+          )}
+        />
+
+        <Controller
+          name="totalAmount"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              value={field.value ?? ""}
+              onChange={(e) =>
+                field.onChange(
+                  e.target.value === "" ? undefined : Number(e.target.value)
+                )
+              }
+              placeholder="totalAmount"
+              type="number"
+            />
+          )}
+        />
+
+        <Button type="submit" label="登録" />
+        <Button
+          type="button"
+          label="リセット"
+          onClick={() => {
+            reset();
+            setCreated(null);
+          }}
+        />
+      </form>
+
+      <div style={{ marginTop: 12 }}>
+        {createMutation.isPending && <div>creating...</div>}
+        {createMutation.isError && <div style={{ color: "red" }}>error</div>}
+        {created && (
+          <div>
+            登録に成功しました:
+            <pre style={{ whiteSpace: "pre-wrap" }}>
+              {JSON.stringify(created, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function OrderQuerySamplePage() {
   // 全体取得用
@@ -159,6 +283,8 @@ export default function OrderQuerySamplePage() {
           </DataTable>
         )}
       </div>
+
+      <CreateOrderForm />
 
       <hr style={{ margin: "24px 0" }} />
 
