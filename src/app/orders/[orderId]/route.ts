@@ -33,9 +33,10 @@ const MOCK_ORDERS = [
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
-  const orderId = parseInt(params.orderId, 10);
+  const { orderId: orderIdStr } = await params;
+  const orderId = parseInt(orderIdStr, 10);
 
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid orderId" }, { status: 400 });
@@ -55,9 +56,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
-  const orderId = parseInt(params.orderId, 10);
+  const { orderId: orderIdStr } = await params;
+  const orderId = parseInt(orderIdStr, 10);
 
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid orderId" }, { status: 400 });
@@ -91,9 +93,10 @@ export async function PUT(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
-  const orderId = parseInt(params.orderId, 10);
+  const { orderId: orderIdStr } = await params;
+  const orderId = parseInt(orderIdStr, 10);
 
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid orderId" }, { status: 400 });
@@ -123,9 +126,10 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
-  const orderId = parseInt(params.orderId, 10);
+  const { orderId: orderIdStr } = await params;
+  const orderId = parseInt(orderIdStr, 10);
 
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid orderId" }, { status: 400 });
