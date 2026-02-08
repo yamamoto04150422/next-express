@@ -78,6 +78,7 @@ export async function PUT(
     };
     return NextResponse.json(MOCK_ORDERS[orderIndex]);
   } catch (error) {
+    console.log("エラー", error);
     return NextResponse.json(
       { error: "Invalid request body" },
       { status: 400 }
@@ -109,6 +110,7 @@ export async function PATCH(
     MOCK_ORDERS[orderIndex] = { ...MOCK_ORDERS[orderIndex], ...body };
     return NextResponse.json(MOCK_ORDERS[orderIndex]);
   } catch (error) {
+    console.log("エラー", error);
     return NextResponse.json(
       { error: "Invalid request body" },
       { status: 400 }
