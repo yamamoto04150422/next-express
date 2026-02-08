@@ -25,16 +25,15 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ListOrdersParams,
   Order,
   OrderCreateRequest,
   OrderPartialUpdate,
   ValidateOrderParams,
   ValidationResult
-} from './api.schemas';
+} from '../orderAndUserManagementAPI.schemas';
 
-import { apiClient } from '../../../../lib/axios';
-
-
+import { apiClient } from '../../../../../../lib/axios';
 
 // https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
 type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
@@ -61,6 +60,100 @@ type NonReadonly<T> = [T] extends [UnionToIntersection<T>] ? {
     ? NonReadonly<NonNullable<T[P]>>
     : T[P];
 } : DistributeReadOnlyOverUnions<T>;
+
+
+
+
+
+/**
+ * @summary 注文一覧を取得する
+ */
+export const listOrders = (
+    params?: ListOrdersParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return apiClient<Order[]>(
+      {url: `/orders`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+
+
+export const getListOrdersQueryKey = (params?: ListOrdersParams,) => {
+    return [
+    `/orders`, ...(params ? [params]: [])
+    ] as const;
+    }
+
+    
+export const getListOrdersQueryOptions = <TData = Awaited<ReturnType<typeof listOrders>>, TError = unknown>(params?: ListOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOrdersQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOrders>>> = ({ signal }) => listOrders(params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   retry: false, refetchOnWindowFocus: false,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListOrdersQueryResult = NonNullable<Awaited<ReturnType<typeof listOrders>>>
+export type ListOrdersQueryError = unknown
+
+
+export function useListOrders<TData = Awaited<ReturnType<typeof listOrders>>, TError = unknown>(
+ params: undefined |  ListOrdersParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOrders>>,
+          TError,
+          Awaited<ReturnType<typeof listOrders>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListOrders<TData = Awaited<ReturnType<typeof listOrders>>, TError = unknown>(
+ params?: ListOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOrders>>,
+          TError,
+          Awaited<ReturnType<typeof listOrders>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListOrders<TData = Awaited<ReturnType<typeof listOrders>>, TError = unknown>(
+ params?: ListOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 注文一覧を取得する
+ */
+
+export function useListOrders<TData = Awaited<ReturnType<typeof listOrders>>, TError = unknown>(
+ params?: ListOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrders>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListOrdersQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
 
 
 
@@ -169,7 +262,7 @@ const {query: queryOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, enabled: !!(orderId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrderById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+   return  { queryKey, queryFn, enabled: !!(orderId),  retry: false, refetchOnWindowFocus: false,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrderById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
 
 export type GetOrderByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getOrderById>>>
@@ -451,7 +544,7 @@ const {query: queryOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof validateOrder>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+   return  { queryKey, queryFn,   retry: false, refetchOnWindowFocus: false,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof validateOrder>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
 
 export type ValidateOrderQueryResult = NonNullable<Awaited<ReturnType<typeof validateOrder>>>

@@ -29,10 +29,9 @@ import type {
   UserCreateRequest,
   UserValidationResult,
   ValidateUserParams
-} from './api.schemas';
+} from '../orderAndUserManagementAPI.schemas';
 
-import { apiClient } from '../../../../lib/axios';
-
+import { apiClient } from '../../../../../../lib/axios';
 
 
 
@@ -141,7 +140,7 @@ const {query: queryOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, enabled: !!(userId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+   return  { queryKey, queryFn, enabled: !!(userId),  retry: false, refetchOnWindowFocus: false,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
 
 export type GetUserByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getUserById>>>
@@ -234,7 +233,7 @@ const {query: queryOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof validateUser>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+   return  { queryKey, queryFn,   retry: false, refetchOnWindowFocus: false,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof validateUser>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
 
 export type ValidateUserQueryResult = NonNullable<Awaited<ReturnType<typeof validateUser>>>

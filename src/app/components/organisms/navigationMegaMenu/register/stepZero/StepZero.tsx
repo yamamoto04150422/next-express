@@ -17,13 +17,27 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Checkbox } from "primereact/checkbox";
 import { api } from "../../../../../../../lib/axios";
 
-// Types
-export type FormValues = {
-  username: string;
-  name: string;
-  agree: boolean;
-  agreeOptions: string[];
-  affiliation?: string;
+// Validation Schema
+const schema = yup.object().shape({
+  username: requiredString("ユーザ名"),
+  name: requiredString("名称"),
+  agree: yup
+    .boolean()
+    .oneOf([true], "利用規約に同意する必要があります")
+    .required(),
+  agreeOptions: yup
+    .array()
+    .of(yup.string().required())
+    .min(1, "1つ以上選択してください")
+    .required("必須です"),
+  affiliation: yup.string().optional(),
+});
+
+// Types（resolver と常に一致させる）
+export type FormValues = yup.InferType<typeof schema>;
+type FormInputValues = Omit<FormValues, "affiliation"> & {
+  // yupResolver の input 側は「key 必須 + undefined許容」になる
+  affiliation: string | undefined;
 };
 
 // API Calls
@@ -49,22 +63,6 @@ const registerUser = async (data: FormValues) => {
   }
 };
 
-// Validation Schema
-const schema = yup.object().shape({
-  username: requiredString("ユーザ名"),
-  name: requiredString("名称"),
-  agree: yup
-    .boolean()
-    .oneOf([true], "利用規約に同意する必要があります")
-    .required(),
-  agreeOptions: yup
-    .array()
-    .of(yup.string().required())
-    .min(1, "1つ以上選択してください")
-    .required("必須です"),
-  affiliation: yup.string().optional(),
-});
-
 export default function StepZero({
   setStep,
 }: {
@@ -74,7 +72,11 @@ export default function StepZero({
 
   console.log("jotai,formData", formData); // Jotaiのatomの値を確認
 
-  const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
+  const { control, handleSubmit, setValue, watch } = useForm<
+    FormInputValues,
+    unknown,
+    FormValues
+  >({
     defaultValues: {
       username: "",
       name: "",
