@@ -11,11 +11,16 @@ import type { z } from "zod";
 import {
   listOrdersQueryParams,
   getOrderByIdParams,
+  replaceOrderBody,
+  updateOrderPartiallyBody,
 } from "@/app/openApi/generated/zod/orders/orders";
 import { createOrderBody } from "@/app/openApi/generated/zod/orders/orders";
 import {
   useListOrders,
   useGetOrderById,
+  useReplaceOrder,
+  useDeleteOrder,
+  useUpdateOrderPartially,
 } from "@/app/openApi/generated/api/orders/orders";
 import { useCreateOrder } from "@/app/openApi/generated/api/orders/orders";
 import { Button } from "primereact/button";
@@ -25,6 +30,189 @@ import { Column } from "primereact/column";
 type ListParams = z.infer<typeof listOrdersQueryParams>;
 type IdParams = z.infer<typeof getOrderByIdParams>;
 type CreateOrder = z.infer<typeof createOrderBody>;
+type ReplaceOrder = z.infer<typeof replaceOrderBody>;
+type UpdateOrderPartially = z.infer<typeof updateOrderPartiallyBody>;
+
+// ---------------------------------------------------------
+// 更新・削除用コンポーネント
+// ---------------------------------------------------------
+function OrderActionForm({
+  order,
+  onActionSuccess,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  order: any;
+  onActionSuccess: () => void;
+}) {
+  const replaceMutation = useReplaceOrder();
+  const deleteMutation = useDeleteOrder();
+
+  const { control, handleSubmit } = useForm<ReplaceOrder>({
+    resolver: zodResolver(replaceOrderBody),
+    defaultValues: {
+      status: order.status,
+      totalAmount: order.totalAmount,
+      items: order.items,
+    },
+  });
+
+  // 更新処理
+  const onUpdate = (data: ReplaceOrder) => {
+    replaceMutation.mutate(
+      { orderId: order.id, data: data },
+      {
+        onSuccess: () => {
+          alert("更新に成功しました");
+          onActionSuccess();
+        },
+      }
+    );
+  };
+
+  // 削除処理
+  const onDelete = () => {
+    if (!confirm("本当に削除しますか？")) return;
+    deleteMutation.mutate(
+      { orderId: order.id },
+      {
+        onSuccess: () => {
+          alert("削除に成功しました");
+          onActionSuccess();
+        },
+      }
+    );
+  };
+
+  const patchMutation = useUpdateOrderPartially();
+
+  const { control: patchControl, handleSubmit: handlePatchSubmit } =
+    useForm<UpdateOrderPartially>({
+      resolver: zodResolver(updateOrderPartiallyBody),
+      defaultValues: { status: order.status, couponCode: order.couponCode },
+    });
+
+  // 部分更新処理
+  const onPatch = (data: UpdateOrderPartially) => {
+    patchMutation.mutate(
+      { orderId: order.id, data },
+      {
+        onSuccess: () => {
+          alert("部分更新に成功しました");
+          onActionSuccess();
+        },
+      }
+    );
+  };
+
+  return (
+    <div
+      style={{
+        border: "1px solid #ccc",
+        padding: 12,
+        marginTop: 12,
+        borderRadius: 8,
+      }}
+    >
+      <h3>注文 ID: {order.id} の操作</h3>
+      <form
+        onSubmit={handleSubmit(onUpdate)}
+        style={{ display: "flex", flexDirection: "column", gap: 8 }}
+      >
+        <div>
+          <label>Status: </label>
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <Dropdown
+                value={field.value}
+                options={[
+                  { label: "PENDING", value: "PENDING" },
+                  { label: "SHIPPED", value: "SHIPPED" },
+                  { label: "DELIVERED", value: "DELIVERED" },
+                  { label: "CANCELLED", value: "CANCELLED" },
+                ]}
+                onChange={(e) => field.onChange(e.value)}
+              />
+            )}
+          />
+        </div>
+
+        <div>
+          <label>Total: </label>
+          <Controller
+            name="totalAmount"
+            control={control}
+            render={({ field }) => (
+              <input
+                type="number"
+                value={field.value ?? ""}
+                onChange={(e) => field.onChange(Number(e.target.value))}
+              />
+            )}
+          />
+        </div>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button
+            type="submit"
+            label="更新 (PUT)"
+            severity="info"
+            loading={replaceMutation.isPending}
+          />
+          <Button
+            type="button"
+            label="削除 (DELETE)"
+            severity="danger"
+            onClick={onDelete}
+            loading={deleteMutation.isPending}
+          />
+        </div>
+      </form>
+
+      <h4>部分更新 (PATCH)</h4>
+      <form
+        onSubmit={handlePatchSubmit(onPatch)}
+        style={{ display: "flex", gap: 8, alignItems: "center" }}
+      >
+        <Controller
+          name="status"
+          control={patchControl}
+          render={({ field }) => (
+            <Dropdown
+              value={field.value}
+              options={[
+                { label: "PENDING", value: "PENDING" },
+                { label: "SHIPPED", value: "SHIPPED" },
+                { label: "DELIVERED", value: "DELIVERED" },
+                { label: "CANCELLED", value: "CANCELLED" },
+              ]}
+              onChange={(e) => field.onChange(e.value)}
+            />
+          )}
+        />
+        <Controller
+          name="couponCode"
+          control={patchControl}
+          render={({ field }) => (
+            <input
+              {...field}
+              value={field.value ?? ""}
+              placeholder="Coupon Code"
+              onChange={(e) => field.onChange(e.target.value || null)}
+            />
+          )}
+        />
+        <Button
+          type="submit"
+          label="一部更新 (PATCH)（ステータスとクーポンコード）"
+          severity="warning"
+          loading={patchMutation.isPending}
+        />
+      </form>
+    </div>
+  );
+}
 
 function CreateOrderForm() {
   const { control, handleSubmit, reset } = useForm<CreateOrder>({
@@ -322,6 +510,23 @@ export default function OrderQuerySamplePage() {
             <div>totalAmount: {orderQuery.data.totalAmount}</div>
             <div>items: {(orderQuery.data.items || []).join(", ")}</div>
           </div>
+        )}
+      </div>
+
+      <div>
+        {orderId === undefined && <div>orderId を入力して取得してください</div>}
+        {orderId !== undefined && orderQuery.isLoading && <div>loading...</div>}
+        {orderId !== undefined && orderQuery.isError && (
+          <div style={{ color: "red" }}>error</div>
+        )}
+        {orderId !== undefined && orderQuery.data && (
+          <OrderActionForm
+            order={orderQuery.data}
+            onActionSuccess={() => {
+              orderQuery.refetch(); // データを再取得
+              listQuery.refetch(); // 一覧も更新
+            }}
+          />
         )}
       </div>
     </div>
