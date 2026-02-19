@@ -1,0 +1,26 @@
+{
+  "recommendations": [
+    "42crunch.vscode-openapi",
+    "arjun.swagger-viewer",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "dsznajder.es7-react-js-snippets",
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-rename-tag",
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-github-actions",
+    "mhutchie.git-graph",
+    "ms-azuretools.vscode-containers",
+    "ms-azuretools.vscode-docker",
+    "ms-ceintl.vscode-language-pack-ja",
+    "ms-playwright.playwright",
+    "ms-vscode-remote.vscode-remote-extensionpack",
+    "pkief.material-icon-theme",
+    "redhat.vscode-yaml",
+    "usernamehw.errorlens"
+  ]
+}
