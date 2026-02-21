@@ -1,5 +1,7 @@
 # REST API 概要
 
+[Web API設計ガイドライン](https://future-architect.github.io/arch-guidelines/documents/forWebAPI/web_api_guidelines.html)
+
 読みやすさと用語の統一を優先して再構成しました。必要に応じて社内向けの補足を追記してください。
 
 ## 目次

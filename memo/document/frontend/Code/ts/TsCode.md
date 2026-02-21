@@ -360,6 +360,20 @@ function handleMessage(code: MessageCode) {
 }
 ```
 
+## カンマ編集
+
+```ts
+new Intl.NumberFormat("ja-JP").format(Number("1000"))
+
+// tableなどに表示するケース
+<Column
+  body={rowData => formatNumber(rowData.price)}
+/>
+// 以下は均等割
+// tableStyle={{ tableLayout: "fixed" }}
+
+```
+
 ## まとめ
 
 if 文の中で型を絞りたいなら、code is XXX を戻り値型に書いて型ガードにする

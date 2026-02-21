@@ -41,6 +41,8 @@
 
 ---
 
+[reduceの詳細](https://qiita.com/chihiro/items/1047e40514a778c08baa)
+
 # 便利テク & パターン集
 
 ## filter → map
