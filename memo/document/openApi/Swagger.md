@@ -4,6 +4,10 @@
 
 同じ階層のymlファイルは基本設計レベルの内容を定義した
 
+openAPi redocについて
+
+> npx @redocly/cli build-docs openapi.yaml --output api-docs.html
+
 ---
 
 ## 1. エンドポイント設計

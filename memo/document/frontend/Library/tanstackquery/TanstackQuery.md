@@ -29,6 +29,13 @@ npm install axios
 npm install @tanstack/react-query-devtools
 ```
 
+```tsx
+<ReactQueryDevtools initialIsOpen={false} />
+
+// 以下は参考リンク
+// https://tanstack.com/query/latest/docs/framework/react/devtools
+```
+
 ## 2. `QueryClient`のセットアップ
 
 Tanstack Queryでは、`QueryClient`を使ってデータフェッチの設定やキャッシュを管理します。
