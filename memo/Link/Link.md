@@ -6,6 +6,45 @@ https://typescript-jp.gitbook.io/deep-dive/styleguide
 https://google.github.io/styleguide/tsguide.html
 https://github.com/google
 
+nextjs まとめ
+https://zenn.dev/akfm/books/nextjs-basic-principle
+
+Next.jsを使うべき5つの理由
+https://qiita.com/Yuki_Oshima/items/5c0dfd8f7af8fb76af8f
+
+静的サイト 高速化(nextは裏でやっていることが多い)
+https://qiita.com/masato_makino/items/4fabe2984b9a023895f2
+
+お前らのReactは遅い
+https://qiita.com/teradonburi/items/5b8f79d26e1b319ac44f
+
+React開発効率を3倍にするVS Code拡張機能
+https://qiita.com/newt0/items/b7810fb38c339ec5e4a7
+
+react 配列基本
+https://qiita.com/itachi/items/4184b2afc35b55b45568
+
+use clientはServer Componentとの境界
+https://zenn.dev/luvmini511/articles/ec0e874a2cc1f1
+
+Next CSR・SSR・SSG・ISR の違い
+https://qiita.com/whopper1962/items/1d1a7179845b3e1d3084
+
+Page Router→App Router
+https://zenn.dev/yamadadayo123/articles/6cb4f586de0183
+
+Reactのディレクトリ構成
+https://qiita.com/Sotq_17/items/7c7ab9880597336b3ee5
+
+2024/01 Next.js 新規アプリの構成 ディレクトリ構成
+https://zenn.dev/hokuto_tech/articles/fdabaff60f5af2
+
+ディレクトリ構成を考える 世の中で一般的に良いとされているパターン
+https://itnext.io/top-6-best-folder-structures-for-react-ultimate-comparison-effc29ae5045
+
+react クリーンアーキ寄り
+https://qiita.com/uminoooon18/items/0ba109feddedf6a3539b
+
 react
 
 https://qiita.com/hiroki-yama-1118/items/b3388c5dcb155e2e367d
@@ -51,6 +90,18 @@ msw
 https://zenn.dev/ryo_kawamata/articles/mock-api-server-with-msw
 https://qiita.com/k8o/items/62180f334a6137d429b5
 https://github.com/mswjs/msw/issues/1877
+
+Jestの逆引き
+https://qiita.com/chimame/items/e97883fd46b67529d59f
+
+React Testing Libraryの使い方
+https://qiita.com/ossan-engineer/items/4757d7457fafd44d2d2f
+
+React Testing Library の和訳
+https://qiita.com/kobanyan/items/126512ec3e8d76c538b3
+
+Reactテスト応用
+https://zenn.dev/tkdn/books/react-testing-patterns/viewer
 
 SPA Login
 https://qiita.com/Hiro-mi/items/18e00060a0f8654f49d6
@@ -222,3 +273,6 @@ https://qiita.com/mserizawa/items/b833e407d89abd21ee72
 
 翻訳: WebAPI 設計のベストプラクティスに対する意見
 https://qiita.com/ryo88c/items/0a3c7861015861026e00
+
+ソフトウェア設計・アーキテクチャ
+https://qiita.com/ROPITAL/items/165bef33492ba27cfbf7
